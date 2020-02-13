@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"declaration": true,
+		"target": "es5",
+		"module":"commonjs",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"lib": ["es2019", "dom"],
+		"declarationDir": "dist/types",
+		"outDir": "dist/lib"
+	},
+	"include": [
+		"src/**/*"
+	],
+	"exclude": ["node_modules"]
+}

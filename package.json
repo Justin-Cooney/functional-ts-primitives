@@ -1,0 +1,26 @@
+{
+  "name": "functional-ts-primitives",
+  "version": "1.0.0",
+  "description": "A collection of functional primitives for TypeScript",
+  "main": "index.js",
+  "author": "Justin Cooney",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Justin-Cooney/functional-ts-primitives.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Justin-Cooney/functional-ts-primitives/issues"
+  },
+  "homepage": "https://github.com/Justin-Cooney/functional-ts-primitives#readme",
+  "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.0",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+      "build": "tsc",
+      "test": "jest --watchAll"
+  }
+}
