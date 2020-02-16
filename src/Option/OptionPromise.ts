@@ -1,0 +1,42 @@
+import { Option, OptionFactory } from ".";
+import { OptionPromise } from "./OptionPromiseTypes";
+import { optionFromPromiseOption } from "./OptionFactory";
+
+export const optionPromise = <TValue>(promise: Promise<Option<TValue>>) : OptionPromise<TValue> => ({
+	[Symbol.toStringTag]: promise.toString(),
+	then: (onfulfilled, onrejected) => promise.then(onfulfilled, onrejected),
+	catch: (onrejected) => promise.catch(onrejected),
+	finally: (onfinally) => promise.finally(onfinally),
+
+	match: (some, none) => promise.then(option => option.match(some, none)),
+	matchAsync: (some, none) => promise.then(option => option.matchAsync(some, none)),
+	toStringAsync: () => promise.then(option => option.toString()),
+	hasValue: () => promise.then(option => option.hasValue()),
+	valueOrDefault: (defaultValue) => promise.then(option => option.valueOrDefault(defaultValue)),
+	valueOrDefaultAsync: (defaultValue) => promise.then(option => option.valueOrDefaultAsync(defaultValue)),
+	defaultIfNone: (defaultValue) => optionFromPromiseOption(() => promise.then(option => option.defaultIfNone(defaultValue))),
+	defaultIfNoneAsync: (defaultValue) => optionFromPromiseOption(() => promise.then(option => option.defaultIfNoneAsync(defaultValue))),
+	toNullable: () => promise.then(option => option.toNullable()),
+	map: (map) => optionFromPromiseOption(() => promise.then(option => option.map(map))),
+	mapAsync: (map) => optionFromPromiseOption(() => promise.then(option => option.mapAsync(map))),
+	bind: (bind) => optionFromPromiseOption(() => promise.then(option => option.bind(bind))),
+	bindAsync: (bind) => optionFromPromiseOption(() => promise.then(option => option.bindAsync(bind))),
+	where: (predicate) => optionFromPromiseOption(() => promise.then(option => option.where(predicate))),
+	whereAsync: (predicate) => optionFromPromiseOption(() => promise.then(option => option.whereAsync(predicate))),
+	do: (ifSome, ifNone) => optionFromPromiseOption(() => promise.then(option => option.do(ifSome, ifNone))),
+	doAsync: (ifSome, ifNone) => optionFromPromiseOption(() => promise.then(option => option.doAsync(ifSome, ifNone))),
+	doAlways: (doAlways) => optionFromPromiseOption(() => promise.then(option => option.doAlways(doAlways))),
+	doAlwaysAsync: (doAlways) => optionFromPromiseOption(() => promise.then(option => option.doAlwaysAsync(doAlways))),
+	doIfSome:  (ifSome) => optionFromPromiseOption(() => promise.then(option => option.doIfSome(ifSome))),
+	doIfSomeAsync: (ifSome) => optionFromPromiseOption(() => promise.then(option => option.doIfSomeAsync(ifSome))),
+	doIfNone: (ifNone) => optionFromPromiseOption(() => promise.then(option => option.doIfNone(ifNone))),
+	doIfNoneAsync: (ifNone) => optionFromPromiseOption(() => promise.then(option => option.doIfNoneAsync(ifNone))),
+	apply: (ifSome, ifNone) => promise.then(option => option.apply(ifSome, ifNone)),
+	applyAsync: (ifSome, ifNone) => promise.then(option => option.applyAsync(ifSome, ifNone)),
+	applyAlways: (applyAlways) => promise.then(option => option.applyAlways(applyAlways)),
+	applyAlwaysAsync: (applyAlways) => promise.then(option => option.applyAlwaysAsync(applyAlways)),
+	applyIfSome: (ifSome) => promise.then(option => option.applyIfSome(ifSome)),
+	applyIfSomeAsync: (ifSome) => promise.then(option => option.applyIfSomeAsync(ifSome)),
+	applyIfNone: (ifNone) => promise.then(option => option.applyIfNone(ifNone)),
+	applyIfNoneAsync: (ifNone) => promise.then(option => option.applyIfNoneAsync(ifNone)),
+});

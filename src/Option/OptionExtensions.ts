@@ -1,35 +1,53 @@
+import { OptionFactory, optionFromPromiseOption } from "./OptionFactory";
+import { OptionPromise } from "./OptionPromiseTypes";
+import { Option, OptionMatchType, OptionMatchAsyncType, OptionToStringType, OptionHasValueType, OptionValueOrDefaultType, OptionDefaultIfNone, OptionToNullableType, OptionToPromiseType, OptionMapType, OptionMapAsyncType, OptionBindType, OptionWhereType, OptionDoType, OptionBindAsyncType, OptionDoIfSomeType, OptionDoIfNoneType, OptionValueOrDefaultAsyncType, OptionDefaultIfNoneAsync, OptionWhereAsyncType, OptionDoAsyncType, OptionDoIfSomeAsyncType, OptionDoIfNoneAsyncType, OptionApplyType, OptionApplyAsyncType, OptionApplyIfSomeAsyncType, OptionApplyIfSomeType, OptionApplyIfNoneType, OptionApplyIfNoneAsyncType, OptionDoAlwaysType, OptionDoAlwaysAsyncType, OptionApplyAlwaysType, OptionApplyAlwaysAsyncType } from "./OptionTypes";
 
-import { Option, ToStringType, HasValueType, ToNullableType, ValueOrDefaultType, MapType, BindType, BindOnNoneType, WhereType, MatchType, DefaultIfNone, DoType, DoIfSomeType, DoIfNoneType, ApplyType, ApplyIfNoneType, ApplyIfSomeType } from "./Option";
-import { OptionFactory, optionSome } from "./OptionFactory";
+export const matchAsync = <TValue>(match: OptionMatchType<TValue>) : OptionMatchAsyncType<TValue> =>
+	async (some, none) => match(await some, await none);
 
-const toString = <TValue>(match: MatchType<TValue>) : ToStringType =>
+export const toString = <TValue>(match: OptionMatchType<TValue>) : OptionToStringType =>
 	() => match(value => `Some: ${value}`, () => "None");
 
-const hasValue = <TValue>(match: MatchType<TValue>) : HasValueType =>
+export const hasValue = <TValue>(match: OptionMatchType<TValue>) : OptionHasValueType =>
 	() => match(_ => true, () => false);
 
-const valueOrDefault = <TValue>(match: MatchType<TValue>) : ValueOrDefaultType<TValue> =>
-	(defaultValue: TValue) => match(value => value, () => defaultValue);
+export const valueOrDefault = <TValue>(match: OptionMatchType<TValue>) : OptionValueOrDefaultType<TValue> =>
+	(defaultValue) => match(value => value, () => defaultValue());
 
-const defaultIfNone = <TValue>(match: MatchType<TValue>) : DefaultIfNone<TValue> =>
-	(defaultValue: TValue) => match(value => optionSome(value), () => optionSome(defaultValue));
+export const valueOrDefaultAsync = <TValue>(match: OptionMatchType<TValue>) : OptionValueOrDefaultAsyncType<TValue> =>
+	(defaultValue) => match(value => Promise.resolve(value), () => defaultValue());
 
-const toNullable = <TValue>(match: MatchType<TValue>) : ToNullableType<TValue> =>
+export const defaultIfNone = <TValue>(match: OptionMatchType<TValue>) : OptionDefaultIfNone<TValue> =>
+	(defaultValue) => match(value => OptionFactory.some(value), () => OptionFactory.some<TValue>(defaultValue()));
+
+export const defaultIfNoneAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDefaultIfNoneAsync<TValue> =>
+	(defaultValue) => match(value => OptionFactory.someAsync(async () => value), () => OptionFactory.someAsync(() => defaultValue()));
+
+export const toNullable = <TValue>(match: OptionMatchType<TValue>) : OptionToNullableType<TValue> =>
 	() => match(value => value, () => null);
 
-const map = <TValue>(match: MatchType<TValue>) : MapType<TValue> =>
-	<TResult>(map: (some: TValue) => TResult) => match(value => OptionFactory.some(map(value)), OptionFactory.none);
+export const toPromise = <TValue>(match: OptionMatchType<TValue>) : OptionToPromiseType<TValue> =>
+	() => match(value => OptionFactory.someAsync(() => Promise.resolve(value)), () => OptionFactory.noneAsync());
 
-const bind = <TValue>(match: MatchType<TValue>) : BindType<TValue> =>
-	<TResult>(bind: (some: TValue) => Option<TResult>) => match(value => bind(value), () => OptionFactory.none<TResult>());
+export const map = <TValue>(match: OptionMatchType<TValue>) : OptionMapType<TValue> =>
+	<TResult>(map: (some: TValue) => TResult) => match(value => OptionFactory.some<TResult>(map(value)), () => OptionFactory.none<TResult>());
 
-const bindOnNone = <TValue>(match: MatchType<TValue>) : BindOnNoneType<TValue> =>
-	(bind: () => Option<TValue>) => match(value => OptionFactory.some(value), bind);
+export const mapAsync = <TValue>(match: OptionMatchType<TValue>) : OptionMapAsyncType<TValue> =>
+	<TResult>(map: (some: TValue) => Promise<TResult>) => match(value => OptionFactory.someAsync<TResult>(() => map(value)), () => OptionFactory.noneAsync<TResult>());
 
-const where = <TValue>(match: MatchType<TValue>) : WhereType<TValue> =>
+export const bind = <TValue>(match: OptionMatchType<TValue>) : OptionBindType<TValue> =>
+	<TResult>(ifSome: (some: TValue) => Option<TResult>) => match(value => ifSome(value), () => OptionFactory.none<TResult>());
+
+export const bindAsync = <TValue>(match: OptionMatchType<TValue>) : OptionBindAsyncType<TValue> =>
+	<TResult>(ifSome: (some: TValue) => OptionPromise<TResult>) => match(value => ifSome(value), () => OptionFactory.noneAsync<TResult>());
+
+export const where = <TValue>(match: OptionMatchType<TValue>) : OptionWhereType<TValue> =>
 	(predicate: (some: TValue) => boolean) =>  match(value => OptionFactory.create(predicate(value), () => value), () => OptionFactory.none<TValue>());
 
-const optionDo = <TValue>(match: MatchType<TValue>) : DoType<TValue> =>
+export const whereAsync = <TValue>(match: OptionMatchType<TValue>) : OptionWhereAsyncType<TValue> =>
+	(predicate: (some: TValue) => Promise<boolean>) =>  match(value => OptionFactory.createAsync(() => predicate(value), async () => value), () => OptionFactory.noneAsync<TValue>());
+
+export const optionDo = <TValue>(match: OptionMatchType<TValue>) : OptionDoType<TValue> =>
 	(doIfSome: (some: TValue) => void, doIfNone: () => void) =>
 		match(
 			value =>
@@ -43,41 +61,51 @@ const optionDo = <TValue>(match: MatchType<TValue>) : DoType<TValue> =>
 				return OptionFactory.none<TValue>()
 			});
 
-const doIfSome = <TValue>(match: MatchType<TValue>) : DoIfSomeType<TValue> =>
-	(doIfSome: (some: TValue) => void) =>
-		match(
+export const doAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoAsyncType<TValue> =>
+	(doIfSome: (some: TValue) => Promise<void>, doIfNone: () => Promise<void>) =>
+		optionFromPromiseOption(() => match(
 			value =>
 			{
-				doIfSome(value);
-				return OptionFactory.some(value)
+				return OptionFactory.someAsync(async () => {
+					await doIfSome(value);
+					return value;
+				});
 			},
-			() => OptionFactory.none<TValue>());
-
-const doIfNone = <TValue>(match: MatchType<TValue>) : DoIfNoneType<TValue> =>
-	(doIfNone: () => void) =>
-		match(
-			value => OptionFactory.some(value),
-			() =>
+			async () => 
 			{
-				doIfNone();
-				return OptionFactory.none<TValue>()
-			});
+				await doIfNone();
+				return OptionFactory.noneAsync<TValue>();
+			}));
 
-const apply = <TValue>(match: MatchType<TValue>) : DoType<TValue> =>
-	(doIfSome: (some: TValue) => void, doIfNone: () => void) =>
+export const doAlways = <TValue>(match: OptionMatchType<TValue>) : OptionDoAlwaysType<TValue> =>
+	(doAction: () => void) =>
 		match(
 			value =>
 			{
-				doIfSome(value);
+				doAction();
 				return OptionFactory.some(value)
 			},
 			() => 
 			{
-				doIfNone();
+				doAction();
 				return OptionFactory.none<TValue>()
 			});
 
-const applyIfSome = <TValue>(match: MatchType<TValue>) : DoIfSomeType<TValue> =>
+export const doAlwaysAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoAlwaysAsyncType<TValue> =>
+	(doAction: () => void) =>
+	optionFromPromiseOption(() => match(
+			async value =>
+			{
+				await doAction();
+				return OptionFactory.some(value)
+			},
+			async () => 
+			{
+				await doAction();
+				return OptionFactory.none<TValue>()
+			}));
+
+export const doIfSome = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfSomeType<TValue> =>
 	(doIfSome: (some: TValue) => void) =>
 		match(
 			value =>
@@ -87,7 +115,17 @@ const applyIfSome = <TValue>(match: MatchType<TValue>) : DoIfSomeType<TValue> =>
 			},
 			() => OptionFactory.none<TValue>());
 
-const applyIfNone = <TValue>(match: MatchType<TValue>) : DoIfNoneType<TValue> =>
+export const doIfSomeAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfSomeAsyncType<TValue> =>
+	(doIfSome: (some: TValue) => Promise<void>) =>
+		optionFromPromiseOption(() => match(
+			async value =>
+			{
+				await doIfSome(value);
+				return OptionFactory.some(value)
+			},
+			() => OptionFactory.noneAsync<TValue>()));
+
+export const doIfNone = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfNoneType<TValue> =>
 	(doIfNone: () => void) =>
 		match(
 			value => OptionFactory.some(value),
@@ -97,21 +135,60 @@ const applyIfNone = <TValue>(match: MatchType<TValue>) : DoIfNoneType<TValue> =>
 				return OptionFactory.none<TValue>()
 			});
 
-export const optionExtensions = <TValue>(match: MatchType<TValue>) => ({
-	toString: <ToStringType> toString(match),
-	hasValue: <HasValueType> hasValue(match),
-	valueOrDefault: <ValueOrDefaultType<TValue>> valueOrDefault(match),
-	defaultIfNone: <DefaultIfNone<TValue>> defaultIfNone(match),
-	toNullable: <ToNullableType<TValue>> toNullable(match),
-	match: <MatchType<TValue>> match,
-	map: <MapType<TValue>> map(match),
-	bind: <BindType<TValue>> bind(match),
-	bindOnNone: <BindOnNoneType<TValue>> bindOnNone(match),
-	where: <WhereType<TValue>> where(match),
-	do: <DoType<TValue>> optionDo(match),
-	doIfSome: <DoIfSomeType<TValue>> doIfSome(match),
-	doIfNone: <DoIfNoneType<TValue>> doIfNone(match),
-	apply: <ApplyType<TValue>> apply(match),
-	applyIfSome: <ApplyIfSomeType<TValue>> applyIfSome(match),
-	applyIfNone: <ApplyIfNoneType<TValue>> applyIfNone(match)
-});
+export const doIfNoneAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfNoneAsyncType<TValue> =>
+	(doIfNone: () => Promise<void>) =>
+		optionFromPromiseOption(() => match(
+			value => OptionFactory.someAsync(async () => value),
+			async () =>
+			{
+				await doIfNone();
+				return OptionFactory.noneAsync<TValue>()
+			}));
+
+export const apply = <TValue>(match: OptionMatchType<TValue>) : OptionApplyType<TValue> =>
+	(doIfSome: (some: TValue) => void, doIfNone: () => void) =>
+		match(
+			value => { doIfSome(value); },
+			() => { doIfNone(); });
+
+export const applyAlways = <TValue>(match: OptionMatchType<TValue>) : OptionApplyAlwaysType =>
+	(doAlways: () => void) =>
+		match(
+			value => { doAlways(); },
+			() => { doAlways(); });
+
+export const applyAlwaysAsync = <TValue>(match: OptionMatchType<TValue>) : OptionApplyAlwaysAsyncType =>
+	(doAlways: () => void) =>
+		match(
+			async value => { await doAlways();},
+			async () => { await doAlways(); });
+
+export const applyAsync = <TValue>(match: OptionMatchType<TValue>) : OptionApplyAsyncType<TValue> =>
+	(doIfSome: (some: TValue) => Promise<void>, doIfNone: () => Promise<void>) =>
+		match(
+			async value => { await doIfSome(value); },
+			async () => { await doIfNone(); });
+
+export const applyIfSome = <TValue>(match: OptionMatchType<TValue>) : OptionApplyIfSomeType<TValue> =>
+	(doIfSome: (some: TValue) => void) =>
+		match(
+			value => { doIfSome(value); },
+			() => {});
+
+export const applyIfSomeAsync = <TValue>(match: OptionMatchType<TValue>) : OptionApplyIfSomeAsyncType<TValue> =>
+	(doIfSome: (some: TValue) => Promise<void>) =>
+		match(
+			async value => { await doIfSome(value); },
+			async () => {});
+
+export const applyIfNone = <TValue>(match: OptionMatchType<TValue>) : OptionApplyIfNoneType =>
+	(doIfNone: () => void) =>
+		match(
+			value => {},
+			() => { doIfNone(); });
+
+export const applyIfNoneAsync = <TValue>(match: OptionMatchType<TValue>) : OptionApplyIfNoneAsyncType =>
+	(doIfNone: () => void) =>
+		match(
+			async value => {},
+			async () => { await doIfNone(); });
