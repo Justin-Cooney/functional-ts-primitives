@@ -1,4 +1,5 @@
 import { Option } from ".";
+import { ResultPromise } from "../Result";
 
 export type OptionPromiseMatchType<TValue> = <T>(some: (value: TValue) => T, none: () => T) => Promise<T>;
 export type OptionPromiseMatchAsyncType<TValue> = <T>(some: (value: TValue) => Promise<T>, none: () => Promise<T>) => Promise<T>;
@@ -9,6 +10,8 @@ export type OptionPromiseValueOrDefaultAsyncType<TValue> = (defaultValue: () => 
 export type OptionPromiseDefaultIfNone<TValue> = (defaultValue: () => TValue) => OptionPromise<TValue>;
 export type OptionPromiseDefaultIfNoneAsync<TValue> = (defaultValue: () => Promise<TValue>) => OptionPromise<TValue>;
 export type OptionPromiseToNullableType<TValue> = () => Promise<TValue | null>;
+export type OptionPromiseToResultType<TValue> = <TFailure> (failureFactory: () => TFailure) => ResultPromise<TValue, TFailure>;
+export type OptionPromiseToResultAsyncType<TValue> = <TFailure> (failureFactory: () => Promise<TFailure>) => ResultPromise<TValue, TFailure>;
 export type OptionPromiseMapType<TValue> = <TResult>(map: (some: TValue) => TResult) => OptionPromise<TResult>;
 export type OptionPromiseMapAsyncType<TValue> = <TResult>(map: (some: TValue) => Promise<TResult>) => OptionPromise<TResult>;
 export type OptionPromiseBindType<TValue> = <TResult>(bind: (some: TValue) => Option<TResult>) => OptionPromise<TResult>;
@@ -43,6 +46,8 @@ export type OptionPromise<TValue> = Promise<Option<TValue>> & {
 	defaultIfNone: OptionPromiseDefaultIfNone<TValue>,
 	defaultIfNoneAsync: OptionPromiseDefaultIfNoneAsync<TValue>,
 	toNullable: OptionPromiseToNullableType<TValue>,
+	toResult: OptionPromiseToResultType<TValue>,
+	toResultAsync: OptionPromiseToResultAsyncType<TValue>,
 	map: OptionPromiseMapType<TValue>,
 	mapAsync: OptionPromiseMapAsyncType<TValue>,
 	bind: OptionPromiseBindType<TValue>,

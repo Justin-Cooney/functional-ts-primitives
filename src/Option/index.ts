@@ -1,3 +1,3 @@
 export { Option } from "./OptionTypes";
-export * from "./OptionPromise";
+export { OptionPromise } from "./OptionPromiseTypes";
 export { OptionFactory } from "./OptionFactory";

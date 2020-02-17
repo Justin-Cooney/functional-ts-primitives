@@ -100,6 +100,26 @@ describe('Option', () => {
 			expect(option.toString()).toStrictEqual(OptionFactory.noneAsync<number>().toString());
 			expect(await option.toNullable()).toBe(null);
 		});
+		test('toResult returns success when some', () => {
+			const result = OptionFactory.some(50).toResult(() => "test");
+			expect(result.isSuccess()).toBeTruthy();
+			expect(result.success().valueOrDefault(() => 100)).toBe(50);
+		});
+		test('toResult returns failure when none', () => {
+			const result = OptionFactory.none<number>().toResult(() => "test");
+			expect(result.isSuccess()).toBeFalsy();
+			expect(result.failure().valueOrDefault(() => "")).toBe("test");
+		});
+		test('toResultAsync returns success when some', async () => {
+			const result = await OptionFactory.some(50).toResultAsync(async () => "test");
+			expect(result.isSuccess()).toBeTruthy();
+			expect(result.success().valueOrDefault(() => 100)).toBe(50);
+		});
+		test('toResultAsync returns failure when none', async () => {
+			const result = await OptionFactory.none<number>().toResultAsync(async () => "test");
+			expect(result.isSuccess()).toBeFalsy();
+			expect(result.failure().valueOrDefault(() => "")).toBe("test");
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

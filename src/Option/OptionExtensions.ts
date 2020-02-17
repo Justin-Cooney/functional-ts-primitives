@@ -1,6 +1,8 @@
-import { OptionFactory, optionFromPromiseOption } from "./OptionFactory";
+import { OptionFactory } from "./OptionFactory";
 import { OptionPromise } from "./OptionPromiseTypes";
-import { Option, OptionMatchType, OptionMatchAsyncType, OptionToStringType, OptionHasValueType, OptionValueOrDefaultType, OptionDefaultIfNone, OptionToNullableType, OptionToPromiseType, OptionMapType, OptionMapAsyncType, OptionBindType, OptionWhereType, OptionDoType, OptionBindAsyncType, OptionDoIfSomeType, OptionDoIfNoneType, OptionValueOrDefaultAsyncType, OptionDefaultIfNoneAsync, OptionWhereAsyncType, OptionDoAsyncType, OptionDoIfSomeAsyncType, OptionDoIfNoneAsyncType, OptionApplyType, OptionApplyAsyncType, OptionApplyIfSomeAsyncType, OptionApplyIfSomeType, OptionApplyIfNoneType, OptionApplyIfNoneAsyncType, OptionDoAlwaysType, OptionDoAlwaysAsyncType, OptionApplyAlwaysType, OptionApplyAlwaysAsyncType } from "./OptionTypes";
+import { Option, OptionMatchType, OptionMatchAsyncType, OptionToStringType, OptionHasValueType, OptionValueOrDefaultType, OptionDefaultIfNone, OptionToNullableType, OptionToPromiseType, OptionMapType, OptionMapAsyncType, OptionBindType, OptionWhereType, OptionDoType, OptionBindAsyncType, OptionDoIfSomeType, OptionDoIfNoneType, OptionValueOrDefaultAsyncType, OptionDefaultIfNoneAsync, OptionWhereAsyncType, OptionDoAsyncType, OptionDoIfSomeAsyncType, OptionDoIfNoneAsyncType, OptionApplyType, OptionApplyAsyncType, OptionApplyIfSomeAsyncType, OptionApplyIfSomeType, OptionApplyIfNoneType, OptionApplyIfNoneAsyncType, OptionDoAlwaysType, OptionDoAlwaysAsyncType, OptionApplyAlwaysType, OptionApplyAlwaysAsyncType, OptionToResultType, OptionToResultAsyncType } from "./OptionTypes";
+import { optionPromiseFromOptionAsync } from "./OptionPromise";
+import { ResultFactory } from "../Result";
 
 export const matchAsync = <TValue>(match: OptionMatchType<TValue>) : OptionMatchAsyncType<TValue> =>
 	async (some, none) => match(await some, await none);
@@ -28,6 +30,12 @@ export const toNullable = <TValue>(match: OptionMatchType<TValue>) : OptionToNul
 
 export const toPromise = <TValue>(match: OptionMatchType<TValue>) : OptionToPromiseType<TValue> =>
 	() => match(value => OptionFactory.someAsync(() => Promise.resolve(value)), () => OptionFactory.noneAsync());
+
+export const toResult = <TValue>(match: OptionMatchType<TValue>) : OptionToResultType<TValue> =>
+	<TFailure> (failureFactory: () => TFailure) => match(value => ResultFactory.success(value), () => ResultFactory.failure(failureFactory()));
+
+export const toResultAsync = <TValue>(match: OptionMatchType<TValue>) : OptionToResultAsyncType<TValue> =>
+	<TFailure> (failureFactory: () => Promise<TFailure>) => match(value => ResultFactory.successAsync(async () => value), () => ResultFactory.failureAsync(failureFactory));
 
 export const map = <TValue>(match: OptionMatchType<TValue>) : OptionMapType<TValue> =>
 	<TResult>(map: (some: TValue) => TResult) => match(value => OptionFactory.some<TResult>(map(value)), () => OptionFactory.none<TResult>());
@@ -63,7 +71,7 @@ export const optionDo = <TValue>(match: OptionMatchType<TValue>) : OptionDoType<
 
 export const doAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoAsyncType<TValue> =>
 	(doIfSome: (some: TValue) => Promise<void>, doIfNone: () => Promise<void>) =>
-		optionFromPromiseOption(() => match(
+		optionPromiseFromOptionAsync(match(
 			value =>
 			{
 				return OptionFactory.someAsync(async () => {
@@ -93,7 +101,7 @@ export const doAlways = <TValue>(match: OptionMatchType<TValue>) : OptionDoAlway
 
 export const doAlwaysAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoAlwaysAsyncType<TValue> =>
 	(doAction: () => void) =>
-	optionFromPromiseOption(() => match(
+		optionPromiseFromOptionAsync(match(
 			async value =>
 			{
 				await doAction();
@@ -117,7 +125,7 @@ export const doIfSome = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfSom
 
 export const doIfSomeAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfSomeAsyncType<TValue> =>
 	(doIfSome: (some: TValue) => Promise<void>) =>
-		optionFromPromiseOption(() => match(
+		optionPromiseFromOptionAsync(match(
 			async value =>
 			{
 				await doIfSome(value);
@@ -137,7 +145,7 @@ export const doIfNone = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfNon
 
 export const doIfNoneAsync = <TValue>(match: OptionMatchType<TValue>) : OptionDoIfNoneAsyncType<TValue> =>
 	(doIfNone: () => Promise<void>) =>
-		optionFromPromiseOption(() => match(
+		optionPromiseFromOptionAsync(match(
 			value => OptionFactory.someAsync(async () => value),
 			async () =>
 			{

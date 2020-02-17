@@ -72,6 +72,26 @@ describe('OptionPromise', () => {
 			const option = await OptionFactory.none<number>().toPromise().toNullable();
 			expect(option).toBe(null);
 		});
+		test('toResult returns success when some', async () => {
+			const result = await OptionFactory.someAsync(async () => 50).toResult(() => "test");
+			expect(result.isSuccess()).toBeTruthy();
+			expect(result.success().valueOrDefault(() => 100)).toBe(50);
+		});
+		test('toResult returns failure when none', async () => {
+			const result = await OptionFactory.noneAsync<number>().toResult(() => "test");
+			expect(result.isSuccess()).toBeFalsy();
+			expect(result.failure().valueOrDefault(() => "")).toBe("test");
+		});
+		test('toResultAsync returns success when some', async () => {
+			const result = await OptionFactory.someAsync(async () => 50).toResultAsync(async () => "test");
+			expect(result.isSuccess()).toBeTruthy();
+			expect(result.success().valueOrDefault(() => 100)).toBe(50);
+		});
+		test('toResultAsync returns failure when none', async () => {
+			const result = await OptionFactory.noneAsync<number>().toResultAsync(async () => "test");
+			expect(result.isSuccess()).toBeFalsy();
+			expect(result.failure().valueOrDefault(() => "")).toBe("test");
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

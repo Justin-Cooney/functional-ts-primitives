@@ -1,7 +1,7 @@
 import { Option, OptionMatchType } from "./OptionTypes";
 import * as Extensions from "./OptionExtensions";
 
-export const option = <TValue>(match: OptionMatchType<TValue>) : Option<TValue> => ({
+export const optionFromMatch = <TValue>(match: OptionMatchType<TValue>) : Option<TValue> => ({
 	match: match,
 	matchAsync: Extensions.matchAsync(match),
 	toString: Extensions.toString(match),
@@ -11,6 +11,8 @@ export const option = <TValue>(match: OptionMatchType<TValue>) : Option<TValue> 
 	defaultIfNone: Extensions.defaultIfNone(match),
 	defaultIfNoneAsync: Extensions.defaultIfNoneAsync(match),
 	toNullable: Extensions.toNullable(match),
+	toResult: Extensions.toResult(match),
+	toResultAsync: Extensions.toResultAsync(match),
 	toPromise: Extensions.toPromise(match),
 	map: Extensions.map(match),
 	mapAsync: Extensions.mapAsync(match),
