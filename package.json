@@ -1,6 +1,6 @@
 {
   "name": "functional-ts-primitives",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A collection of functional primitives for TypeScript",
   "main": "index.js",
   "author": "Justin Cooney",
@@ -20,7 +20,7 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-      "build": "tsc",
-      "test": "jest --watchAll"
+    "build": "tsc",
+    "test": "jest --watchAll"
   }
 }
