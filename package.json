@@ -1,8 +1,9 @@
 {
   "name": "functional-ts-primitives",
-  "version": "1.0.1",
+  "version": "1.0.4",
   "description": "A collection of functional primitives for TypeScript",
-  "main": "index.js",
+  "main": "dist/lib/index.js",
+  "types": "dist/types/index.d.ts",
   "author": "Justin Cooney",
   "license": "MIT",
   "repository": {
