@@ -18,6 +18,8 @@ export const optionFromMatch = <TValue>(match: OptionMatchType<TValue>) : Option
 	mapAsync: Extensions.mapAsync(match),
 	bind: Extensions.bind(match),
 	bindAsync: Extensions.bindAsync(match),
+	bindOnNone: Extensions.bindOnNone(match),
+	bindOnNoneAsync: Extensions.bindOnNoneAsync(match),
 	where: Extensions.where(match),
 	whereAsync: Extensions.whereAsync(match),
 	do: Extensions.optionDo(match),
