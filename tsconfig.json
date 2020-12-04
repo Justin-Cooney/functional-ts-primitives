@@ -7,7 +7,8 @@
 		"esModuleInterop": true,
 		"lib": ["es2019", "dom"],
 		"declarationDir": "dist/types",
-		"outDir": "dist/lib"
+		"outDir": "dist/lib",
+		"strictNullChecks": true
 	},
 	"include": [
 		"src/**/*"

@@ -99,7 +99,6 @@ describe('Result Factory', () => {
 	test('tryAction returns unit when successful', async () => {
 		const result = ResultFactory.tryAction(() => {});
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('tryAction returns error when failure throws error', async () => {
 		const result = ResultFactory.tryAction(() => { throw new Error("error"); });
@@ -124,7 +123,6 @@ describe('Result Factory', () => {
 	test('tryActionAsync returns unit when successful', async () => {
 		const result = await ResultFactory.tryActionAsync(async () => {});
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('tryActionAsync returns error when failure throws error', async () => {
 		const result = await ResultFactory.tryActionAsync(async () => { throw new Error("error"); });
@@ -149,31 +147,27 @@ describe('Result Factory', () => {
 	test('unit returns unit result', async () => {
 		const result = ResultFactory.unit<Error>();
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('unitAsync returns unit result', async () => {
 		const result = await ResultFactory.unitAsync<Error>();
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('where factory returns unit when true', async () => {
 		const result = ResultFactory.where<string>(true, () => "failure");
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('where factory returns failure when false', async () => {
 		const result = ResultFactory.where<string>(false, () => "failure");
 		expect(result.isSuccess()).toBeFalsy();
-		expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+		expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 	});
 	test('whereAsync factory returns unit when true', async () => {
 		const result = await ResultFactory.whereAsync<string>(async () => true, async () => "failure");
 		expect(result.isSuccess()).toBeTruthy();
-		expect(result.success().valueOrDefault(() => undefined)).toBe(Unit);
 	});
 	test('whereAsync factory returns failure when false', async () => {
 		const result = await ResultFactory.whereAsync<string>(async () => false, async  () => "failure");
 		expect(result.isSuccess()).toBeFalsy();
-		expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+		expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 	});
 });

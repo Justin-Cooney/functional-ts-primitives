@@ -40,9 +40,9 @@ export const mapFailureAsync = <TSuccess, TFailure>(match: ResultMatchType<TSucc
 
 export const tryMap = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFailure>) : ResultTryMapType<TSuccess, TFailure> => {
 	function tryMapOverloaded<TResult, TMapFailure extends Error & TFailure>(map: (success: TSuccess) => TResult) : Result<TResult, Error | TFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: (error: Error) => TMapFailure) : Result<TResult, TMapFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: (error: Error) => TMapFailure = undefined) {
-		if(mapFailure === undefined)
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TMapFailure) | null) : Result<TResult, TMapFailure>
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TMapFailure) | null = null) {
+		if(mapFailure === null)
 		{
 			return match<Result<TResult, Error | TFailure>>(success => ResultFactory.try<TResult>(() => map(success)), failure => ResultFactory.failure(failure));
 		}
@@ -60,9 +60,9 @@ export const tryMap = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFai
 
 export const tryMapAsync = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFailure>) : ResultTryMapAsyncType<TSuccess, TFailure> => {
 	function tryMapOverloaded<TResult, TMapFailure extends Error & TFailure>(map: (success: TSuccess) => Promise<TResult>) : ResultPromise<TResult, Error | TFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: (error: Error) => Promise<TMapFailure>) : ResultPromise<TResult, TMapFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: (error: Error) => Promise<TMapFailure> = undefined) {
-		if(mapFailure === undefined)
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TMapFailure>) | null) : ResultPromise<TResult, TMapFailure>
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TMapFailure>) | null = null) {
+		if(mapFailure === null)
 		{
 			return match<ResultPromise<TResult, Error | TFailure>>(success => ResultFactory.tryAsync<TResult>(() => map(success)), failure => ResultFactory.failureAsync(async () => failure));
 		}
@@ -80,9 +80,9 @@ export const tryMapAsync = <TSuccess, TFailure>(match: ResultMatchType<TSuccess,
 
 export const tryMapFromPromise = <TSuccess, TFailure>(result: Promise<Result<TSuccess, TFailure>>) : ResultPromiseTryMapType<TSuccess, TFailure> => {
 	function tryMapOverloaded<TResult, TMapFailure extends Error & TFailure>(map: (success: TSuccess) => TResult) : ResultPromise<TResult, Error | TFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: (error: Error) => TMapFailure) : ResultPromise<TResult, TMapFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: (error: Error) => TMapFailure = undefined) {
-		if(mapFailure === undefined)
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TMapFailure) | null) : ResultPromise<TResult, TMapFailure>
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TMapFailure) | null  = null) {
+		if(mapFailure === null)
 		{
 			return result.then(r => r.match<Result<TResult, Error | TFailure>>(success => ResultFactory.try<TResult>(() => map(success)), failure => ResultFactory.failure(failure)));
 		}
@@ -100,9 +100,9 @@ export const tryMapFromPromise = <TSuccess, TFailure>(result: Promise<Result<TSu
 
 export const tryMapAsyncFromPromise = <TSuccess, TFailure>(result: Promise<Result<TSuccess, TFailure>>) : ResultPromiseTryMapAsyncType<TSuccess, TFailure> => {
 	function tryMapOverloaded<TResult, TMapFailure extends Error & TFailure>(map: (success: TSuccess) => Promise<TResult>) : ResultPromise<TResult, Error | TFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: (error: Error) => Promise<TMapFailure>) : ResultPromise<TResult, TMapFailure>
-	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: (error: Error) => Promise<TMapFailure> = undefined) {
-		if(mapFailure === undefined)
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TMapFailure>) | null ) : ResultPromise<TResult, TMapFailure>
+	function tryMapOverloaded<TResult, TMapFailure extends TFailure>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TMapFailure>) | null  = null) {
+		if(mapFailure === null)
 		{
 			return result.then(r => r.match<ResultPromise<TResult, Error | TFailure>>(success => ResultFactory.tryAsync<TResult>(() => map(success)), failure => ResultFactory.failureAsync(async () => failure)));
 		}

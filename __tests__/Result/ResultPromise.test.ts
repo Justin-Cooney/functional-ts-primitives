@@ -67,47 +67,47 @@ describe('Result', () => {
 		test('map returns mapSuccess when success', async () => {
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).map(success => "success");
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("success");
+			expect(result.success().valueOrDefault(() => "")).toBe("success");
 		});
 		test('map returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").map(success => "success");
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+			expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 		});
 		test('mapAsync returns map when success', async () => {
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).mapAsync(async success => "success");
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("success");
+			expect(result.success().valueOrDefault(() => "")).toBe("success");
 		});
 		test('mapAsync returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").mapAsync(async success => "success");
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+			expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 		});
 		test('mapFailure returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, string>(async () => 50).mapFailure(failure => 3);
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('mapFailure returns map when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").mapFailure(failure => 3);
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(3);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(3);
 		});
 		test('mapFailureAsync returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).mapFailureAsync(async failure => 3);
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('mapFailureAsync returns map when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").mapFailureAsync(async failure => 3);
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(3);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(3);
 		});
 		test('tryMap returns map when success', async () => {
 			const result = ResultFactory.success(100).tryMap(success => "success");
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("success");
+			expect(result.success().valueOrDefault(() => "")).toBe("success");
 		});
 		test('tryMap returns error when fails', async () => {
 			const result = await ResultFactory.successAsync(async () => 100).tryMap(success => { throw new Error("error") });
@@ -122,17 +122,17 @@ describe('Result', () => {
 		test('tryMap returns failure when already failed', async () => {
 			const result = await ResultFactory.failureAsync<string, number>(async () => 100).tryMap(success => "success");
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(100);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(100);
 		});
 		test('tryMap returns failure when already failed and map throws error', async () => {
 			const result = await ResultFactory.failureAsync<string, number>(async () => 100).tryMap(success => { throw new Error("error") });
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(100);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(100);
 		});
 		test('tryMapAsync returns map when success', async () => {
 			const result = await ResultFactory.successAsync(async () => 100).tryMapAsync(async success => "success");
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("success");
+			expect(result.success().valueOrDefault(() => "")).toBe("success");
 		});
 		test('tryMapAsync returns error when fails', async () => {
 			const result = await ResultFactory.successAsync(async () => 100).tryMapAsync(async success => { throw new Error("error") });
@@ -147,86 +147,86 @@ describe('Result', () => {
 		test('tryMapAsync returns failure when already failed', async () => {
 			const result = await ResultFactory.failureAsync<string, number>(async () => 100).tryMapAsync(async success => "success");
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(100);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(100);
 		});
 		test('tryMapAsync returns failure when already failed and map throws error', async () => {
 			const result = await ResultFactory.failureAsync<string, number>(async () => 100).tryMapAsync(async success => { throw new Error("error") });
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe(100);
+			expect(result.failure().valueOrDefault(() => 0)).toBe(100);
 		});
 		test('bind returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, string>(async () => 50).bind(success => ResultFactory.success<string, string>(success.toString()));
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("50");
+			expect(result.success().valueOrDefault(() => "")).toBe("50");
 		});
 		test('bind returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").bind(success => ResultFactory.success<string, string>(success.toString()));
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+			expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 		});
 		test('bindAsync returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, string>(async () => 50).bindAsync(async success => ResultFactory.success<string, string>(success.toString()));
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe("50");
+			expect(result.success().valueOrDefault(() => "")).toBe("50");
 		});
 		test('bindAsync returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, string>(async () => "failure").bindAsync(async success => ResultFactory.success<string, string>(success.toString()));
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("failure");
+			expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 		});
 		test('bindFailure returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, string>(async () => 50).bindFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('bindFailure returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, number>(async () => 40).bindFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("40");
+			expect(result.failure().valueOrDefault(() => "")).toBe("40");
 		});
 		test('bindFailureAsync returns success when success', async () => {
 			const result = await ResultFactory.successAsync<number, string>(async () => 50).bindFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('bindFailureAsync returns failure when failure', async () => {
 			const result = await ResultFactory.failureAsync<number, number>(async () => 40).bindFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toBe("40");
+			expect(result.failure().valueOrDefault(() => "")).toBe("40");
 		});
 		test('where returns success when true', async () => {
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).where(success => true, success => new Error());
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('where returns failure when is failure', async () => {
 			var error = new Error();
 			const result = await ResultFactory.failureAsync<number, Error>(async () => error).where(success => true, success => new Error());
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(error);
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(error);
 		});
 		test('where returns failure when false', async () => {
 			var error = new Error();
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).where(success => false, success => error);
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(error);
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(error);
 		});
 		test('whereAsync returns success when true', async () => {
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).whereAsync(async success => true, async success => new Error());
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('whereAsync returns failure when is failure', async () => {
 			var error = new Error();
 			const result = await ResultFactory.failureAsync<number, Error>(async () => error).whereAsync(async success => true, async success => new Error());
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(error);
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(error);
 		});
 		test('whereAsync returns failure when false', async () => {
 			var error = new Error();
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).whereAsync(async success => false, async success => error);
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(error);
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(error);
 		});
 	});
 
@@ -238,7 +238,7 @@ describe('Result', () => {
 			expect(successExecuted).toBeTruthy();
 			expect(failureExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('do executes failure when failure', async () => {
 			var successExecuted = false;
@@ -247,7 +247,7 @@ describe('Result', () => {
 			expect(successExecuted).toBeFalsy();
 			expect(failureExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doAsync executes success when success', async () => {
 			var successExecuted = false;
@@ -256,7 +256,7 @@ describe('Result', () => {
 			expect(successExecuted).toBeTruthy();
 			expect(failureExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doAsync executes failure when failure', async () => {
 			var successExecuted = false;
@@ -265,91 +265,91 @@ describe('Result', () => {
 			expect(successExecuted).toBeFalsy();
 			expect(failureExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doAlways executes success when success', async () => {
 			var executed = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doAlways(() => executed = true);
 			expect(executed).toBeTruthy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doAlways executes failure when failure', async () => {
 			var executed = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doAlways(() => executed = true);
 			expect(executed).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doAlwaysAsync executes success when success', async () => {
 			var executed = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doAlways(() => executed = true);
 			expect(executed).toBeTruthy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doAlwaysAsync executes failure when failure', async () => {
 			var executed = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doAlways(() => executed = true);
 			expect(executed).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doIfSuccessful executes success when success', async () => {
 			var successExecuted = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doIfSuccessful(success => successExecuted = true);
 			expect(successExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doIfSuccessful executes failure when failure', async () => {
 			var successExecuted = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doIfSuccessful(success => successExecuted = true);
 			expect(successExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doIfSuccessfulAsync executes when success', async () => {
 			var successExecuted = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doIfSuccessfulAsync(async success => { successExecuted = true });
 			expect(successExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doIfSuccessfulAsync does not execute when failure', async () => {
 			var successExecuted = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doIfSuccessfulAsync(async success => { successExecuted = true });
 			expect(successExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doIfFailure does not execute when success', async () => {
 			var failureExecuted = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doIfFailure(failure => failureExecuted = true);
 			expect(failureExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doIfFailure executes when failure', async () => {
 			var failureExecuted = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doIfFailure(failure => failureExecuted = true);
 			expect(failureExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 		test('doIfFailureAsync does not execute when success', async () => {
 			var failureExecuted = false;
 			const result = await ResultFactory.successAsync<number, Error>(async () => 50).doIfFailureAsync(async failure => { failureExecuted = true });
 			expect(failureExecuted).toBeFalsy();
 			expect(result.isSuccess()).toBeTruthy();
-			expect(result.success().valueOrDefault(() => undefined)).toBe(50);
+			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
 		test('doIfFailureAsync executes when failure', async () => {
 			var failureExecuted = false;
 			const result = await ResultFactory.failureAsync<number, Error>(async () => new Error()).doIfFailureAsync(async failure => { failureExecuted = true });
 			expect(failureExecuted).toBeTruthy();
 			expect(result.isSuccess()).toBeFalsy();
-			expect(result.failure().valueOrDefault(() => undefined)).toStrictEqual(new Error());
+			expect(result.failure().valueOrDefault(() => new Error("Not the same error"))).toStrictEqual(new Error());
 		});
 	});
 
