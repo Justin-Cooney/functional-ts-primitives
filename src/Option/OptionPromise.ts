@@ -23,6 +23,8 @@ export const optionPromiseFromOptionAsync = <TValue>(promise: Promise<Option<TVa
 	mapAsync: (map) => optionPromiseFromOptionAsync(promise.then(option => option.mapAsync(map))),
 	bind: (bind) => optionPromiseFromOptionAsync(promise.then(option => option.bind(bind))),
 	bindAsync: (bind) => optionPromiseFromOptionAsync(promise.then(option => option.bindAsync(bind))),
+	bindOnNone: (bindOnNone) => optionPromiseFromOptionAsync(promise.then(option => option.bindOnNone(bindOnNone))),
+	bindOnNoneAsync: (bindOnNone) => optionPromiseFromOptionAsync(promise.then(option => option.bindOnNoneAsync(bindOnNone))),
 	where: (predicate) => optionPromiseFromOptionAsync(promise.then(option => option.where(predicate))),
 	whereAsync: (predicate) => optionPromiseFromOptionAsync(promise.then(option => option.whereAsync(predicate))),
 	do: (ifSome, ifNone) => optionPromiseFromOptionAsync(promise.then(option => option.do(ifSome, ifNone))),
