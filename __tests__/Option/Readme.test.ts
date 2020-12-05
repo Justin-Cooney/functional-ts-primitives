@@ -12,12 +12,12 @@ describe('OptionFactory Readme', () => {
 	});
 
 	test('conditionally', async () => {
-		const some : Option<number>  = OptionFactory.create(true, () => 100);
-		const none : Option<number>  = OptionFactory.create(false, () => 100);
+		const some : Option<number>  = OptionFactory.create(() => true, () => 100);
+		const none : Option<number>  = OptionFactory.create(() => false, () => 100);
 		const someAsync : Option<number> = await OptionFactory.createAsync(async () => true, async () => 100);
 		const noneAsync : Option<number> = await OptionFactory.createAsync(async () => false, async () => 100);
-		const someUnit : Option<Unit> = OptionFactory.where(true);
-		const noneUnit : Option<Unit> = OptionFactory.where(false);
+		const someUnit : Option<Unit> = OptionFactory.where(() => true);
+		const noneUnit : Option<Unit> = OptionFactory.where(() => false);
 	});
 
 	test('fromNullable', async () => {
@@ -127,10 +127,10 @@ describe('Option Readme', () => {
 
 	test('toNullable', async () => {
 		// Returns 100
-		const value : number = OptionFactory.some(100).toNullable();
+		const value : number | null = OptionFactory.some(100).toNullable();
 
 		// Returns null
-		const nullValue : number = OptionFactory.none<number>().toNullable();
+		const nullValue : number | null = OptionFactory.none<number>().toNullable();
 	});
 
 	test('toPromise', async () => {

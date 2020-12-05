@@ -56,7 +56,7 @@ export const bindOnNoneAsync = <TValue>(match: OptionMatchType<TValue>) : Option
 	(ifNone: () => OptionPromise<TValue>) => match(value => OptionFactory.someAsync(async () => value), ifNone);
 
 export const where = <TValue>(match: OptionMatchType<TValue>) : OptionWhereType<TValue> =>
-	(predicate: (some: TValue) => boolean) =>  match(value => OptionFactory.create(predicate(value), () => value), () => OptionFactory.none<TValue>());
+	(predicate: (some: TValue) => boolean) =>  match(value => OptionFactory.create(() => predicate(value), () => value), () => OptionFactory.none<TValue>());
 
 export const whereAsync = <TValue>(match: OptionMatchType<TValue>) : OptionWhereAsyncType<TValue> =>
 	(predicate: (some: TValue) => Promise<boolean>) =>  match(value => OptionFactory.createAsync(() => predicate(value), async () => value), () => OptionFactory.noneAsync<TValue>());

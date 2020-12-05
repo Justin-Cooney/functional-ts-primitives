@@ -22,12 +22,12 @@ describe('Factory Methods', () => {
 		expect(option.match(x => 100, () => 34)).toBe(34);
 	});
 	test('create returns empty when false', async () => {
-		const option = OptionFactory.create<number>(false, () => 50);
+		const option = OptionFactory.create<number>(() => false, () => 50);
 		expect(option.hasValue()).toBeFalsy();
 		expect(option.toNullable()).toBe(null);
 	});
 	test('create returns value when true', async () => {
-		const option = OptionFactory.create<number>(true, () => 50);
+		const option = OptionFactory.create<number>(() => true, () => 50);
 		expect(option.hasValue()).toBeTruthy();
 		expect(option.toNullable()).toBe(50);
 	});
@@ -57,12 +57,12 @@ describe('Factory Methods', () => {
 		expect(option.toNullable()).toBe(50);
 	});
 	test('where returns unit when true', () => {
-		const option = OptionFactory.where(true);
+		const option = OptionFactory.where(() => true);
 		expect(option.hasValue()).toBeTruthy();
 		expect(option.toNullable()).toBe(Unit);
 	});
 	test('where returns empty when false', () => {
-		const option = OptionFactory.where(false);
+		const option = OptionFactory.where(() => false);
 		expect(option.hasValue()).toBeFalsy();
 		expect(option.toNullable()).toBe(null);
 	});

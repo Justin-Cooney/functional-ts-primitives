@@ -163,6 +163,26 @@ describe('Option', () => {
 			expect(option.hasValue()).toBeFalsy();
 			expect(option.toNullable()).toBe(null);
 		});
+		test('bindOnNone returns correct value when has some', () => {
+			const option = OptionFactory.some<number>(50).bindOnNone(() => OptionFactory.some(25));
+			expect(option.hasValue()).toBeTruthy();
+			expect(option.toNullable()).toBe(50);
+		});
+		test('bindOnNone returns correct value when empty', () => {
+			const option = OptionFactory.none<number>().bindOnNone(() => OptionFactory.some(25));
+			expect(option.hasValue()).toBeTruthy();
+			expect(option.toNullable()).toBe(25);
+		});
+		test('bindOnNoneAsync returns correct value when has some', async () => {
+			const option = await OptionFactory.some<number>(50).bindOnNoneAsync(() => OptionFactory.some(25).toPromise());
+			expect(option.hasValue()).toBeTruthy();
+			expect(option.toNullable()).toBe(50);
+		});
+		test('bindOnNoneAsync returns correct value when empty', async () => {
+			const option = await OptionFactory.none<number>().bindOnNoneAsync(() => OptionFactory.some(25).toPromise());
+			expect(option.hasValue()).toBeTruthy();
+			expect(option.toNullable()).toBe(25);
+		});
 		test('where returns some when true', () => {
 			const option = OptionFactory.some(100).where(some => true);
 			expect(option.hasValue()).toBeTruthy();
