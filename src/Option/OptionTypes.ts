@@ -38,7 +38,7 @@ export type OptionApplyIfNoneAsyncType = (applyIfNone: () => Promise<void>) => P
 
 export type Option<TValue> = {
 	toString: OptionToStringType,
-	match: OptionMatchType<TValue>,
+	 match: OptionMatchType<TValue>,
 	matchAsync: OptionMatchAsyncType<TValue>,
 	hasValue: OptionHasValueType,
 	valueOrDefault: OptionValueOrDefaultType<TValue>,

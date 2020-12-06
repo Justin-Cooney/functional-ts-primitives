@@ -17,10 +17,14 @@
     "@types/jest": "^25.1.2",
     "jest": "^25.1.0",
     "ts-jest": "^25.2.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.2"
   },
   "scripts": {
-      "build": "tsc",
-      "test": "jest --watchAll"
+    "build": "tsc",
+    "test": "jest --watchAll"
+  },
+  "dependencies": {
+    "benchmark": "^2.1.4",
+    "fp-ts": "^2.5.3"
   }
 }
