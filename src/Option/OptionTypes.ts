@@ -44,6 +44,7 @@ export type OptionApplyIfNoneAsyncType = (applyIfNone: () => Promise<void>) => P
  */
 export type Option<TValue> = {
 	/**
+	 * Returns a string representing the content of the Option.
 	 * @returns `Some: ${value}` if the option contains some or `None` if the option contains none.
 	 */
 	toString: OptionToStringType,

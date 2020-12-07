@@ -26,12 +26,12 @@ describe('Result Factory', () => {
 		expect(result.match(s => 1, f => 2)).toBe(2);
 	});
 	test('create returns result with success when success is true', async () => {
-		const result = ResultFactory.create<number, string>(true, () => 50, () => "test");
+		const result = ResultFactory.create<number, string>(() => true, () => 50, () => "test");
 		expect(result.isSuccess()).toBeTruthy();
 		expect(result.success().valueOrDefault(() => 1)).toBe(50);
 	});
 	test('create returns result with error when success is false', async () => {
-		const result = ResultFactory.create<number, string>(false, () => 50, () => "test");
+		const result = ResultFactory.create<number, string>(() => false, () => 50, () => "test");
 		expect(result.isSuccess()).toBeFalsy();
 		expect(result.failure().valueOrDefault(() => "")).toBe("test");
 	});
@@ -153,11 +153,11 @@ describe('Result Factory', () => {
 		expect(result.isSuccess()).toBeTruthy();
 	});
 	test('where factory returns unit when true', async () => {
-		const result = ResultFactory.where<string>(true, () => "failure");
+		const result = ResultFactory.where<string>(() => true, () => "failure");
 		expect(result.isSuccess()).toBeTruthy();
 	});
 	test('where factory returns failure when false', async () => {
-		const result = ResultFactory.where<string>(false, () => "failure");
+		const result = ResultFactory.where<string>(() => false, () => "failure");
 		expect(result.isSuccess()).toBeFalsy();
 		expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 	});

@@ -136,7 +136,7 @@ export const bindFailureAsync = <TSuccess, TFailure>(match: ResultMatchType<TSuc
 
 export const where = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFailure>) : ResultWhereType<TSuccess, TFailure> => 
 	(predicate: (success: TSuccess) => boolean, failureFactory: (success: TSuccess) => TFailure) => 
-		match(success => ResultFactory.create(predicate(success), () => success, () => failureFactory(success)), failure => ResultFactory.failure(failure));
+		match(success => ResultFactory.create(() => predicate(success), () => success, () => failureFactory(success)), failure => ResultFactory.failure(failure));
 
 export const whereAsync = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFailure>) : ResultWhereAsyncType<TSuccess, TFailure> => 
 	(predicate: (success: TSuccess) => Promise<boolean>, failureFactory: (success: TSuccess) => Promise<TFailure>) => 

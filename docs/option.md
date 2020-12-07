@@ -43,7 +43,7 @@ const someUnit : Option<Unit> = OptionFactory.unit();
 
 ## Working with `OptionPromise<TValue>`
 
-When working asynchronously a separate `OptionPromise<TValue>` type is provided. Use this type in the place of `Promise<Option<TValue>>` to take advantage of the many extension functions provided.
+For working asynchronously a separate `OptionPromise<TValue>` type is provided. Use this type in the place of `Promise<Option<TValue>>` to take advantage of the many extension functions provided.
 
 ## Working with `Option<TValue>`
 

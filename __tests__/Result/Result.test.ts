@@ -178,23 +178,23 @@ describe('Result', () => {
 			expect(result.isSuccess()).toBeFalsy();
 			expect(result.failure().valueOrDefault(() => "")).toBe("failure");
 		});
-		test('bindFailure returns success when success', async () => {
-			const result = ResultFactory.success<number, string>(50).bindFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
+		test('bindOnFailure returns success when success', async () => {
+			const result = ResultFactory.success<number, string>(50).bindOnFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
 			expect(result.isSuccess()).toBeTruthy();
 			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
-		test('bindFailure returns failure when failure', async () => {
-			const result = ResultFactory.failure<number, number>(40).bindFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
+		test('bindOnFailure returns failure when failure', async () => {
+			const result = ResultFactory.failure<number, number>(40).bindOnFailure(failure => ResultFactory.failure<number, string>(failure.toString()));
 			expect(result.isSuccess()).toBeFalsy();
 			expect(result.failure().valueOrDefault(() => "")).toBe("40");
 		});
-		test('bindFailureAsync returns success when success', async () => {
-			const result = await ResultFactory.success<number, string>(50).bindFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
+		test('bindOnFailureAsync returns success when success', async () => {
+			const result = await ResultFactory.success<number, string>(50).bindOnFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
 			expect(result.isSuccess()).toBeTruthy();
 			expect(result.success().valueOrDefault(() => 0)).toBe(50);
 		});
-		test('bindFailureAsync returns failure when failure', async () => {
-			const result = await ResultFactory.failure<number, number>(40).bindFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
+		test('bindOnFailureAsync returns failure when failure', async () => {
+			const result = await ResultFactory.failure<number, number>(40).bindOnFailureAsync(failure => ResultFactory.failureAsync<number, string>(async () => failure.toString()));
 			expect(result.isSuccess()).toBeFalsy();
 			expect(result.failure().valueOrDefault(() => "")).toBe("40");
 		});

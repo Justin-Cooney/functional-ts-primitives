@@ -7,3 +7,4 @@
 ## Sections
 
 - [`Option<TValue>` Types](/docs/option.md)
+- [`Result<TSuccess, TFailure>` Types](/docs/result.md)

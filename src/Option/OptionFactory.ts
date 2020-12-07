@@ -17,6 +17,7 @@ export const optionUnit = () : Option<Unit> => optionSome(Unit);
 export const OptionFactory = {
 	/**
 	 * Returns an Option that has the provided value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @param value The value of the option.
 	 * @returns An Option with a value.
 	 */
@@ -24,6 +25,7 @@ export const OptionFactory = {
 
 	/**
 	 * Returns an Option that has the provided value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @param value The value of the option.
 	 * @returns An Option with a value.
 	 */
@@ -31,18 +33,21 @@ export const OptionFactory = {
 
 	/**
 	 * Returns an Option that has no value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @returns An Option with no value.
 	 */
 	none: optionNone,
 
 	/**
 	 * Returns an Option that has no value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @returns An Option with no value.
 	 */
 	noneAsync: optionNoneAsync,
 
 	/**
 	 * If the function passed as the first paramter resolves to true, returns an option with the value produced by the function passed in as the second parameter. Otherwise, returns an Option with no value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @param isSome A function that returns a boolean determining whether the Option has a value or is empty.
 	 * @param valueFactory A function that produces the value of the option.
 	 * @returns An Option with a value or no value depending on the result of the first paramter.
@@ -52,6 +57,7 @@ export const OptionFactory = {
 
 	/**
 	 * If the function passed as the first paramter resolves to true, returns an option with the value produced by the function passed in as the second parameter. Otherwise, returns an Option with no value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @param isSome A function that returns a boolean determining whether the Option has a value or is empty.
 	 * @param valueFactory A function that produces the value of the option.
 	 * @returns An Option with a value or no value depending on the result of the first paramter.
@@ -61,6 +67,7 @@ export const OptionFactory = {
 
 	/**
 	 * If the value of the first paramter is null or defined, returns an Option with no value. Otherwise, returns an Option with the value.
+	 * @typeparam TValue The type of the option's possible value.
 	 * @param value The value of the Option or `null`\`undefined` if the Option is empty.
 	 * @returns An Option with a value or no value depending on if the provided value is null or undefined.
 	 */
