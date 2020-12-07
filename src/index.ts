@@ -15,9 +15,9 @@ var suite = new Benchmark.Suite();
 
 // add tests
 suite
-  .add('new Option', newOptionArray)
-  .add('hkt option', hktOptionArray)
-  .add('option', competitorOptionArray)
+  .add('current Option with HTK match', newOptionArray)
+  .add('HKT option', hktOptionArray)
+  .add('fp-ts option', competitorOptionArray)
   .on('cycle', function(event: any) {
     console.log(String(event.target));
   })
