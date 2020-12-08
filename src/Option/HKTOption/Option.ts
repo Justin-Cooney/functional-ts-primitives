@@ -12,15 +12,15 @@ export class Some<A> {
   match<B>(onSome: (a: A) => B, onNone: () => B): B { return onSome(this.value) }
   matchAsync<B>(onSome: (a: A) => B, onNone: () => B): Promise<B> { return Promise.resolve(onSome(this.value)) }
   map<B>(onSome: (a: A) => B): Option<B>{ return some(onSome(this.value)) }
-	mapAsync<B>(onSome: (a: A) => B): Promise<B> { return Promise.resolve(onSome(this.value)) }
+  mapAsync<B>(onSome: (a: A) => B): Promise<B> { return Promise.resolve(onSome(this.value)) }
   bind<B>(onSome: (a: A) => Option<B>): Option<B> { return onSome(this.value) }
   bindAsync<B>(onSome: (a: A) => Option<B>): Option<B> { return onSome(this.value) }
   where(predicate: (some: A) => boolean): Option<A> { return predicate(this.value) ? this : none }
   whereAsync(predicate: (some: A) => boolean): Promise<Option<A>> { return predicate(this.value) ? Promise.resolve(this) : Promise.resolve(none) }
   apply(onSome: (a: A) => void, onNone: () => void): Option<A> { onSome(this.value); return this; }
   applyAsync(onSome: (a: A) => Promise<void>, onNone: () => Promise<void>): Promise<Option<A>> { return onSome(this.value).then(() => { return this; }) }
-	applyAlways(doAction: () => void): Option<A> { doAction(); return this; }
-	asyncapplyAlwaysAsync(doAction: (a: A) => Promise<void>): Promise<Option<A>> { return doAction(this.value).then(() => { return this }); }
+  applyAlways(doAction: () => void): Option<A> { doAction(); return this; }
+  asyncapplyAlwaysAsync(doAction: (a: A) => Promise<void>): Promise<Option<A>> { return doAction(this.value).then(() => { return this }); }
   applyIfSome(onSome: (a: A) => void): Option<A> { onSome(this.value); return this }
   applyIfSomeAsync(onSome: (a: A) => Promise<void>): Promise<Option<A>> { return onSome(this.value).then(() => { return this });}
   applyIfNone(onNone: () => void): Option<A> { return this }
@@ -36,10 +36,10 @@ export class Some<A> {
   valueOrDefault(defaultValue: A): A { return this.value}
   valueOrDefaultAsync(defaultValue: A): Promise<A> { return Promise.resolve(this.value) }
   defaultIfNone(defaultValue: A) : Option<A> { return this}
-	defaultIfNoneAsync(defaultValue: A): Promise<Option<A>> { return Promise.resolve(this) }
+  defaultIfNoneAsync(defaultValue: A): Promise<Option<A>> { return Promise.resolve(this) }
   toNullable(): A | null { return this.value }
   // toResult: Extensions.toResult(match),
-	// toResultAsync: Extensions.toResultAsync(match),
+  // toResultAsync: Extensions.toResultAsync(match),
   toPromise() {return Promise.resolve(this)}
   toString() { return  `Some: ${this.value}` };
 }
@@ -60,8 +60,8 @@ export class None<A> {
   whereAsync(predicate: (some: A) => boolean): Promise<Option<A>> { return Promise.resolve(none) }
   apply(onSome: (a: A) => void, onNone: () => void): Option<A> { onNone(); return this; }
   applyAsync(onSome: (a: A) => Promise<void>, onNone: () => Promise<void>): Promise<Option<A>> { return onNone().then(() => { return this }) }
-	applyAlways(doAction: () => void): Option<A> { doAction(); return this; }
-	applyAlwaysAsync(doAction: () => Promise<void>): Promise<Option<A>> { return doAction().then(() => { return this });}
+  applyAlways(doAction: () => void): Option<A> { doAction(); return this; }
+  applyAlwaysAsync(doAction: () => Promise<void>): Promise<Option<A>> { return doAction().then(() => { return this });}
   applyIfSome(onSome: (a: A) => void): Option<A> { return this; }
   applyIfSomeAsync(onSome: (a: A) => Promise<void>): Promise<Option<A>> { return Promise.resolve(this); }
   applyIfNone(onNone: (a: A) => void): Option<A> { onNone; return this; }
