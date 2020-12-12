@@ -96,7 +96,7 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	 * If the Option has a value, this extension will return the value. If the Option has no value it will return undefined.
 	 * @returns The value of the option or `undefined`.
 	 */
-	valueOrUndefined () : Promise<TValue | undefined> { return this.then(option => option.toValueOrUndefined()); }
+	valueOrUndefined () : Promise<TValue | undefined> { return this.then(option => option.valueOrUndefined()); }
 
 	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.
