@@ -373,6 +373,18 @@ const value : number | null = Option.some(100).toNullable();
 const nullValue : number | null = Option.none<number>().toNullable();
 ```
 
+### valueOrUndefined
+
+If the Option has a value, this extension will return the value. If the Option has no value it will return undefined.
+
+```typescript
+// Returns 100
+const value : number | undefined = Option.some(100).valueOrUndefined();
+
+// Returns undefined
+const nullValue : number | undefined = Option.none<number>().valueOrUndefined();
+```
+
 ### toPromise
 
 Returns the Option as an OptionPromise.

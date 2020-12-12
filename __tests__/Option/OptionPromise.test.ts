@@ -72,6 +72,14 @@ describe('OptionPromise', () => {
 			const option = await Option.none<number>().toPromise().toNullable();
 			expect(option).toBe(null);
 		});
+		test('valueOrUndefined returns some when has value', async () => {
+			const option = await Option.some(50).toPromise().valueOrUndefined();
+			expect(option).toBe(50);
+		});
+		test('valueOrUndefined returns undefined when empty', async () => {
+			const option = await Option.none<number>().toPromise().valueOrUndefined();
+			expect(option).toBe(undefined);
+		});
 		test('toResult returns success when some', async () => {
 			const result = await Option.someAsync(async () => 50).toResult(() => "test");
 			expect(result.isSuccess()).toBeTruthy();

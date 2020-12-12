@@ -93,6 +93,12 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	toNullable () : Promise<TValue | null> { return this.then(option => option.toNullable()); }
 
 	/**
+	 * If the Option has a value, this extension will return the value. If the Option has no value it will return undefined.
+	 * @returns The value of the option or `undefined`.
+	 */
+	valueOrUndefined () : Promise<TValue | undefined> { return this.then(option => option.toValueOrUndefined()); }
+
+	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.
 	 * @typeparam `T` The return type of the function.
 	 * @param some A function that is executed if the option has some value.

@@ -90,6 +90,14 @@ describe('Option', () => {
 			const option = Option.none<number>().toNullable();
 			expect(option).toBe(null);
 		});
+		test('valueOrUndefined returns some when has value', () => {
+			const option = Option.some(50).valueOrUndefined();
+			expect(option).toBe(50);
+		});
+		test('valueOrUndefined returns undefined when empty', () => {
+			const option = Option.none<number>().valueOrUndefined();
+			expect(option).toBe(undefined);
+		});
 		test('toPromise returns OptionPromise when some', async () => {
 			const option = Option.some<number>(50).toPromise();
 			expect(option.toString()).toStrictEqual(Option.someAsync(async () => 50).toString());

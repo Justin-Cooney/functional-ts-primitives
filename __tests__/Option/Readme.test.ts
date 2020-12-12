@@ -133,6 +133,14 @@ describe('Option Readme', () => {
 		const nullValue : number | null = Option.none<number>().toNullable();
 	});
 
+	test('valueOrUndefined', async () => {
+		// Returns 100
+		const value : number | undefined = Option.some(100).valueOrUndefined();
+
+		// Returns undefined
+		const nullValue : number | undefined = Option.none<number>().valueOrUndefined();
+	});
+
 	test('toPromise', async () => {
 		// Returns an OptionPromise<number> with a value of 100
 		const valuePromise : OptionPromise<number> = Option.some(100).toPromise();

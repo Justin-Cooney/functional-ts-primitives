@@ -74,6 +74,12 @@ export class Option<TValue> {
 	toNullable () : TValue | null { return this._hasValue ? this._value as TValue : null }
 
 	/**
+	 * If the Option has a value, this extension will return the value. If the Option has no value it will return undefined.
+	 * @returns The value of the option or `undefined`.
+	 */
+	valueOrUndefined () : TValue | undefined { return this._hasValue ? this._value as TValue : undefined; }
+
+	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.
 	 * @typeparam `T` The return type of the function.
 	 * @param some A function that is executed if the option has some value.
