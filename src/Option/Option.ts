@@ -411,4 +411,125 @@ export class Option<TValue> {
 	 * @returns An `Option<Unit>` with a value.
 	 */
 	static unit() : Option<Unit> { return new Option(true, Unit); }
+	
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2>(opt1: Option<T1>, opt2: Option<T2>) : Option<[T1, T2]>
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @typeparam `T3` The third type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @param opt3 The third option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2, T3>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>) : Option<[T1, T2, T3]>
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @typeparam `T3` The third type.
+	 * @typeparam `T4` The fourth type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @param opt3 The third option.
+	 * @param opt4 The fourth option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2, T3, T4>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>, opt4: Option<T4>) : Option<[T1, T2, T3, T4]>
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @typeparam `T3` The third type.
+	 * @typeparam `T4` The fourth type.
+	 * @typeparam `T5` The fifth type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @param opt3 The third option.
+	 * @param opt4 The fourth option.
+	 * @param opt5 The fifth option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2, T3, T4, T5>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>, opt4: Option<T4>, opt5: Option<T5>) : Option<[T1, T2, T3, T4, T5]>
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @typeparam `T3` The third type.
+	 * @typeparam `T4` The fourth type.
+	 * @typeparam `T5` The fifth type.
+	 * @typeparam `T6` The sixth type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @param opt3 The third option.
+	 * @param opt4 The fourth option.
+	 * @param opt5 The fifth option.
+	 * @param opt6 The sixth option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2, T3, T4, T5, T6>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>, opt4: Option<T4>, opt5: Option<T5>, opt6: Option<T6>) : Option<[T1, T2, T3, T4, T5, T6]>
+	/**
+	 * Combines multiple options into a an option with a tuple of values. If any of the options are empty, the returned option is also empty.
+	 * @typeparam `T1` The first type.
+	 * @typeparam `T2` The second type.
+	 * @typeparam `T3` The third type.
+	 * @typeparam `T4` The fourth type.
+	 * @typeparam `T5` The fifth type.
+	 * @typeparam `T6` The sixth type.
+	 * @typeparam `T7` The seventh type.
+	 * @param opt1 The first option.
+	 * @param opt2 The second option.
+	 * @param opt3 The third option.
+	 * @param opt4 The fourth option.
+	 * @param opt5 The fifth option.
+	 * @param opt6 The sixth option.
+	 * @param opt7 The seventh option.
+	 * @returns An Option with a tuple of values.
+	 */
+	static zip<T1, T2, T3, T4, T5, T6, T7>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>, opt4: Option<T4>, opt5: Option<T5>, opt6: Option<T6>, opt7: Option<T7>) : Option<[T1, T2, T3, T4, T5, T6, T7]>
+	static zip<T1, T2, T3, T4, T5, T6, T7, T8>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3>, opt4: Option<T4>, opt5: Option<T5>, opt6: Option<T6>, opt7: Option<T7>, opt8: Option<T8>) : Option<[T1, T2, T3, T4, T5, T6, T7, T8]>
+	static zip<T1, T2, T3, T4, T5, T6, T7, T8>(opt1: Option<T1>, opt2: Option<T2>, opt3: Option<T3> | undefined = undefined, opt4: Option<T4> | undefined = undefined, opt5: Option<T5> | undefined = undefined, opt6: Option<T6> | undefined  = undefined, opt7: Option<T7> | undefined = undefined, opt8: Option<T8> | undefined = undefined) {
+		if(opt8) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false) && (opt4?.hasValue() ?? false) && (opt5?.hasValue() ?? false) && (opt6?.hasValue() ?? false) && (opt7?.hasValue() ?? false) && (opt8?.hasValue() ?? false),
+				() => <[T1, T2, T3, T4, T5, T6, T7, T8]>[ opt1.valueOrUndefined() as T1, opt2.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3, opt4?.valueOrUndefined() as T4, opt5?.valueOrUndefined() as T5, opt6?.valueOrUndefined() as T6, opt7?.valueOrUndefined() as T7, opt8?.valueOrUndefined() as T8 ]);
+		}
+		if(opt7) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false) && (opt4?.hasValue() ?? false) && (opt5?.hasValue() ?? false) && (opt6?.hasValue() ?? false) && (opt7?.hasValue() ?? false),
+				() => <[T1, T2, T3, T4, T5, T6, T7]>[ opt1.valueOrUndefined() as T1, opt2.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3, opt4?.valueOrUndefined() as T4, opt5?.valueOrUndefined() as T5, opt6?.valueOrUndefined() as T6, opt7?.valueOrUndefined() as T7 ]);
+		}
+		if(opt6) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false) && (opt4?.hasValue() ?? false) && (opt5?.hasValue() ?? false) && (opt6?.hasValue() ?? false),
+				() => <[T1, T2, T3, T4, T5, T6]>[ opt1.valueOrUndefined() as T1, opt2?.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3, opt4?.valueOrUndefined() as T4, opt5?.valueOrUndefined() as T5, opt6?.valueOrUndefined() as T6 ]);
+		}
+		if(opt5) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false) && (opt4?.hasValue() ?? false) && (opt5?.hasValue() ?? false),
+				() => <[T1, T2, T3, T4, T5]>[ opt1.valueOrUndefined() as T1, opt2?.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3, opt4?.valueOrUndefined() as T4, opt5?.valueOrUndefined() as T5 ]);
+		}
+		if(opt4) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false) && (opt4?.hasValue() ?? false),
+				() => <[T1, T2, T3, T4]>[ opt1.valueOrUndefined() as T1, opt2?.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3, opt4?.valueOrUndefined() as T4 ]);
+		}
+		if(opt3) {
+			return Option.create(
+				() => opt1.hasValue() && opt2.hasValue() && (opt3?.hasValue() ?? false),
+				() => <[T1, T2, T3]>[ opt1.valueOrUndefined() as T1, opt2?.valueOrUndefined() as T2, opt3?.valueOrUndefined() as T3 ]);
+		}
+		return Option.create(
+			() => opt1.hasValue() && opt2.hasValue(),
+			() => <[T1, T2]>[ opt1.valueOrUndefined() as T1, opt2?.valueOrUndefined() as T2 ]);
+	}
 }

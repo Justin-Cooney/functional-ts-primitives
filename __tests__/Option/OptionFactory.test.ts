@@ -72,3 +72,58 @@ describe('Factory Methods', () => {
 		expect(option.toNullable()).toBe(Unit);
 	});
 });
+
+describe('Option Zip', () => {
+	test('zip returns some when all have some', () => {
+		const tuple2 = Option.zip(Option.some(1), Option.some(2));
+		expect(tuple2.hasValue()).toBeTruthy();
+		expect(tuple2.toNullable()).toStrictEqual([1, 2]);
+
+		const tuple3 = Option.zip(Option.some(1), Option.some(2), Option.some(3));
+		expect(tuple3.hasValue()).toBeTruthy();
+		expect(tuple3.toNullable()).toStrictEqual([1, 2, 3]);
+
+		const tuple4 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4));
+		expect(tuple4.hasValue()).toBeTruthy();
+		expect(tuple4.toNullable()).toStrictEqual([1, 2, 3, 4]);
+
+		const tuple5 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5));
+		expect(tuple5.hasValue()).toBeTruthy();
+		expect(tuple5.toNullable()).toStrictEqual([1, 2, 3, 4, 5]);
+
+		const tuple6 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5), Option.some(6));
+		expect(tuple6.hasValue()).toBeTruthy();
+		expect(tuple6.toNullable()).toStrictEqual([1, 2, 3, 4, 5, 6]);
+
+		const tuple7 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5), Option.some(6), Option.some(7));
+		expect(tuple7.hasValue()).toBeTruthy();
+		expect(tuple7.toNullable()).toStrictEqual([1, 2, 3, 4, 5, 6, 7]);
+
+		const tuple8 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5), Option.some(6), Option.some(7), Option.some(8));
+		expect(tuple8.hasValue()).toBeTruthy();
+		expect(tuple8.toNullable()).toStrictEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+	});
+
+	test('zip returns none when any hase none', () => {
+		var tuple2 = Option.zip(Option.some(1), Option.none<number>());
+		expect(tuple2.hasValue()).toBeFalsy();
+
+		const tuple3 = Option.zip(Option.some(1), Option.none<number>(), Option.some(3));
+		expect(tuple3.hasValue()).toBeFalsy();
+
+		const tuple4 = Option.zip(Option.some(1), Option.some(2), Option.none<number>(), Option.some(4));
+		expect(tuple4.hasValue()).toBeFalsy();
+
+		const tuple5 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.none<number>(), Option.some(5));
+		expect(tuple5.hasValue()).toBeFalsy();
+
+		const tuple6 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.none<number>(), Option.some(6));
+		expect(tuple6.hasValue()).toBeFalsy();
+
+		const tuple7 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5), Option.none<number>(), Option.some(7));
+		expect(tuple7.hasValue()).toBeFalsy();
+
+		const tuple8 = Option.zip(Option.some(1), Option.some(2), Option.some(3), Option.some(4), Option.some(5), Option.some(6), Option.none<number>(), Option.some(8));
+		expect(tuple8.hasValue()).toBeFalsy();
+	});
+});

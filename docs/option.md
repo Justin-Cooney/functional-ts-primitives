@@ -37,8 +37,15 @@ const none : Option<number> = Option.fromNullable<number>(null);
 ```
 
 ### Option with unit
+
 ```typescript
 const someUnit : Option<Unit> = Option.unit();
+```
+
+### Combining Options
+
+```typescript
+const OptionWithTuple : Option<[number, string]> = Option.zip(Option.some(1), Option.some("Value"));
 ```
 
 ## Working with `OptionPromise<TValue>`
