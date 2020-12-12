@@ -136,6 +136,13 @@ describe('Option', () => {
 			const array = Option.none<number>().toArray();
 			expect(array).toStrictEqual([]);
 		});
+		test('throwOnNone returns value when some', () => {
+			const value = Option.some(50).throwOnNone(() => new Error("Some Error"));
+			expect(value).toBe(50);
+		});
+		test('throwOnNone throws error when none', () => {
+			expect(() => Option.none<number>().throwOnNone(() => new Error("Some Error"))).toThrowError(new Error("Some Error"));
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

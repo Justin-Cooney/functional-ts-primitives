@@ -310,4 +310,12 @@ describe('Option Readme', () => {
 		// Returns []
 		const arrayNone = Option.none<number>().toArray();
 	});
+
+	test('throwOnNone', async () => {
+		// Returns 50
+		const arraySome = Option.some(50).throwOnNone(() => new Error("Some"));
+
+		// Throws error
+		const arrayNone = Option.none<number>().toArray();
+	});
 });

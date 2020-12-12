@@ -77,13 +77,23 @@ export class Option<TValue> {
 	 * If the Option has a value, this extension will return the value. If the Option has no value it will return null.
 	 * @returns The value of the option or `null`.
 	 */
-	toNullable () : TValue | null { return this._hasValue ? this._value as TValue : null }
+	toNullable() : TValue | null { return this._hasValue ? this._value as TValue : null }
 
 	/**
 	 * If the Option has a value, this extension will return the value. If the Option has no value it will return undefined.
 	 * @returns The value of the option or `undefined`.
 	 */
-	valueOrUndefined () : TValue | undefined { return this._hasValue ? this._value as TValue : undefined; }
+	valueOrUndefined() : TValue | undefined { return this._hasValue ? this._value as TValue : undefined; }
+
+	/**
+	 * If the option has some value, the value is returned. If the option has no value an error is generated and thrown. Warning: This function has the potential to throw errors and should be used with caution.
+	 * @param errorFactory A factory for generating an error in the case the option has no value.
+	 * @returns The value of the Option.
+	 */
+	throwOnNone(errorFactory: () => Error) : TValue {
+		if(this._hasValue) return this._value as TValue;
+		throw errorFactory();
+	}
 
 	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.

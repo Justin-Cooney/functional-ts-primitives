@@ -108,6 +108,13 @@ describe('OptionPromise', () => {
 			const array = await Option.none<number>().toPromise().toArray();
 			expect(array).toStrictEqual([]);
 		});
+		test('throwOnNone returns value when some', async () => {
+			const value = await Option.some(50).toPromise().throwOnNone(() => new Error("Some Error"));
+			expect(value).toBe(50);
+		});
+		test('throwOnNone throws error when none', async () => {
+			expect(Option.none<number>().toPromise().throwOnNone(() => new Error("Some Error"))).rejects.toContain(new Error("Some Error"));
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

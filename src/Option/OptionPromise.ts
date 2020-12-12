@@ -104,10 +104,11 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	valueOrUndefined () : Promise<TValue | undefined> { return this.then(option => option.valueOrUndefined()); }
 
 	/**
-	 * If the Option has an array value, the array is returned. Otherwise an empty array is returned
-	 * @returns The Option's array or an empty array
+	 * If the option has some value, the value is returned. If the option has no value an error is generated and thrown. Warning: This function has the potential to throw errors and should be used with caution.
+	 * @param errorFactory A factory for generating an error in the case the option has no value.
+	 * @returns The value of the Option.
 	 */
-	valueOrEmpty<T>(this: OptionPromise<T[]>) : Promise<T[]> { return this.then(option => option.valueOrEmpty()); }
+	throwOnNone(errorFactory: () => Error) : Promise<TValue> { return this.then(option => option.throwOnNone(errorFactory)); }
 
 	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.
@@ -294,4 +295,13 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	 * @param applyIfNone The function to be executed if the Option has no value.
 	 */
 	applyIfNoneAsync(applyIfNone: () => Promise<void>) : Promise<void> { return this.then(option => option.applyIfNoneAsync(applyIfNone)); }
+
+	/* Arrays */
+
+	/**
+	 * If the Option has an array value, the array is returned. Otherwise an empty array is returned
+	 * @returns The Option's array or an empty array
+	 */
+	valueOrEmpty<T>(this: OptionPromise<T[]>) : Promise<T[]> { return this.then(option => option.valueOrEmpty()); }
+
 }

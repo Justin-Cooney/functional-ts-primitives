@@ -427,6 +427,18 @@ const arraySome = Option.some(50).toArray();
 const arrayNone = Option.none<number>().toArray();
 ```
 
+### throwOnNone
+
+If the option has some value, the value is returned. If the option has no value an error is generated and thrown. Warning: This function has the potential to throw errors and should be used with caution.
+
+```typescript
+// Returns 50
+const arraySome = Option.some(50).throwOnNone(() => new Error("Some"));
+
+// Throws error
+const arrayNone = Option.none<number>().toArray();
+```
+
 ## Array Extensions
 
 ### valueOrEmpty
