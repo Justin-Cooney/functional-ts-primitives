@@ -317,6 +317,16 @@ export class Option<TValue> {
 		return Promise.resolve();
 	}
 
+	/* Array */
+
+	/**
+	 * If the Option has an array value, the array is returned. Otherwise an empty array is returned
+	 * @returns The Option's array or an empty array
+	 */
+	valueOrEmpty<T>(this: Option<T[]>) : T[] { return this._hasValue ? this._value as T[] : []; }
+
+	/* Factories */
+
 	/**
 	 * Returns an Option that has the provided value.
 	 * @typeparam TValue The type of the option's possible value.

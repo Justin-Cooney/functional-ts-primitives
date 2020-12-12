@@ -373,4 +373,16 @@ describe('OptionPromise', () => {
 			expect(methodExecuted).toBeTruthy();
 		});
 	});
+
+	describe('Array Extensions', () => {
+		test('valueOrEmpty returns array when has some', async () => {
+			var array = await Option.some([1, 2, 3, 4]).toPromise().valueOrEmpty();
+			expect(array).toStrictEqual([1, 2, 3, 4]);
+		});
+
+		test('valueOrEmpty returns empty array when has none', async () => {
+			var array = await Option.none<number[]>().toPromise().valueOrEmpty();
+			expect(array).toStrictEqual([]);
+		});
+	});
 });

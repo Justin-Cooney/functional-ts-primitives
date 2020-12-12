@@ -294,4 +294,12 @@ describe('Option Readme', () => {
 		// Logs `None`
 		Option.none<number>().applyIfNoneAsync(async () => console.log("None"));
 	});
+
+	test('valueOrEmpty', async () => {
+		// Returns [1, 2, 3, 4]
+		const arraySome = Option.some([1, 2, 3, 4]).valueOrEmpty();
+
+		// Returns []
+		const arrayNone = Option.none<number[]>().valueOrEmpty();
+	});
 });

@@ -99,6 +99,12 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	valueOrUndefined () : Promise<TValue | undefined> { return this.then(option => option.valueOrUndefined()); }
 
 	/**
+	 * If the Option has an array value, the array is returned. Otherwise an empty array is returned
+	 * @returns The Option's array or an empty array
+	 */
+	valueOrEmpty<T>(this: OptionPromise<T[]>) : Promise<T[]> { return this.then(option => option.valueOrEmpty()); }
+
+	/**
 	 * If the Option has a value, then the function in the first parameter is invoked and it's result is returned. If the Option has no value, then the function in the second parameter is invoked instead.
 	 * @typeparam `T` The return type of the function.
 	 * @param some A function that is executed if the option has some value.

@@ -420,4 +420,16 @@ describe('Option', () => {
 			expect(methodExecuted).toBeTruthy();
 		});
 	});
+
+	describe('Array Extensions', () => {
+		test('valueOrEmpty returns array when has some', () => {
+			var array = Option.some([1, 2, 3, 4]).valueOrEmpty();
+			expect(array).toStrictEqual([1, 2, 3, 4]);
+		});
+
+		test('valueOrEmpty returns empty array when has none', () => {
+			var array = Option.none<number[]>().valueOrEmpty();
+			expect(array).toStrictEqual([]);
+		});
+	});
 });
