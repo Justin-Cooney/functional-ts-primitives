@@ -34,6 +34,12 @@ export class Option<TValue> {
 	toResultAsync<TFailure> (failureFactory: () => Promise<TFailure>) : ResultPromise<TValue, TFailure> { return this._hasValue ? Result.successAsync<TValue, TFailure>(() => Promise.resolve(this._value as TValue)) : Result.failureAsync<TValue, TFailure>(failureFactory) }
 
 	/**
+	 * If the Option has a value, returns an array with the value as a single item. If the Option has no value returns an empty array.
+	 * @returns The contained value as an array or an empty array.
+	 */
+	toArray() : TValue[] { return this._hasValue ? [ this._value as TValue ] : []; }
+
+	/**
 	 * If the Option has a value, this extension will return `true`. If the Option has no value it will return `false`.
 	 * @returns A boolean representing whether the Option has value or not.
 	 */

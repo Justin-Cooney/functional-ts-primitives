@@ -128,6 +128,14 @@ describe('Option', () => {
 			expect(result.isSuccess()).toBeFalsy();
 			expect(result.failure().valueOrDefault(() => "")).toBe("test");
 		});
+		test('toArray returns array when some', () => {
+			const array = Option.some(50).toArray();
+			expect(array).toStrictEqual([50]);
+		});
+		test('toArray returns empty array when none', () => {
+			const array = Option.none<number>().toArray();
+			expect(array).toStrictEqual([]);
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

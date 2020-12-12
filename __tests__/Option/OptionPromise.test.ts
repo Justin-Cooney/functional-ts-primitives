@@ -100,6 +100,14 @@ describe('OptionPromise', () => {
 			expect(result.isSuccess()).toBeFalsy();
 			expect(result.failure().valueOrDefault(() => "")).toBe("test");
 		});
+		test('toArray returns array when some', async () => {
+			const array = await Option.some(50).toPromise().toArray();
+			expect(array).toStrictEqual([50]);
+		});
+		test('toArray returns empty array when none', async () => {
+			const array = await Option.none<number>().toPromise().toArray();
+			expect(array).toStrictEqual([]);
+		});
 	});
 
 	describe('Map, Bind, Where', () => {

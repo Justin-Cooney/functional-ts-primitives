@@ -302,4 +302,12 @@ describe('Option Readme', () => {
 		// Returns []
 		const arrayNone = Option.none<number[]>().valueOrEmpty();
 	});
+
+	test('toArray', async () => {
+		// Returns [50]
+		const arraySome = Option.some(50).toArray();
+
+		// Returns []
+		const arrayNone = Option.none<number>().toArray();
+	});
 });

@@ -415,6 +415,18 @@ const succesfulResultAsync : ResultPromise<number, Error> = Option.some(100).toR
 const failureResultAsync : ResultPromise<number, Error> = Option.none<number>().toResultAsync(async () => new Error("message"));
 ```
 
+### toArray
+
+If the Option has a value, returns an array with the value as a single item. If the Option has no value returns an empty array.
+
+```typescript
+// Returns [50]
+const arraySome = Option.some(50).toArray();
+
+// Returns []
+const arrayNone = Option.none<number>().toArray();
+```
+
 ## Array Extensions
 
 ### valueOrEmpty

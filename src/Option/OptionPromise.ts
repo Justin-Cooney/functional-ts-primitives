@@ -51,6 +51,11 @@ export class OptionPromise<TValue> implements Promise<Option<TValue>> {
 	 */
 	toResultAsync<TFailure> (failureFactory: () => Promise<TFailure>) : ResultPromise<TValue, TFailure> { return new ResultPromise(this.then(option => option.toResultAsync(failureFactory))); }
 
+	/**
+	 * If the Option has a value, returns an array with the value as a single item. If the Option has no value returns an empty array.
+	 * @returns The contained value as an array or an empty array.
+	 */
+	toArray() : Promise<TValue[]> { return this.then(option => option.toArray()); }
 
 	/**
 	 * If the Option has a value, this extension will return `true`. If the Option has no value it will return `false`.
