@@ -1,40 +1,541 @@
-import { ResultMatchType, Result } from "./ResultTypes";
-import * as Extensions from "./ResultExtensions";
+import { ResultPromise, Unit, Option } from "../index";
 
-export const resultFromMatch = <TSuccess, TFailure>(match: ResultMatchType<TSuccess, TFailure>) : Result<TSuccess, TFailure> => ({
-	match: match,
-	matchAsync: Extensions.matchAsync(match),
-	toString: Extensions.toString(match),
-	isSuccess: Extensions.isSuccess(match),
-	toPromise: Extensions.toPromise(match),
-	success: Extensions.success(match),
-	failure: Extensions.failure(match),
-	map: Extensions.map(match),
-	mapAsync: Extensions.mapAsync(match),
-	mapFailure: Extensions.mapFailure(match),
-	mapFailureAsync: Extensions.mapFailureAsync(match),
-	tryMap: Extensions.tryMap(match),
-	tryMapAsync: Extensions.tryMapAsync(match),
-	bind: Extensions.bind(match),
-	bindAsync: Extensions.bindAsync(match),
-	bindOnFailure: Extensions.bindFailure(match),
-	bindOnFailureAsync: Extensions.bindFailureAsync(match),
-	where: Extensions.where(match),
-	whereAsync: Extensions.whereAsync(match),
-	do: Extensions.resultDo(match),
-	doAsync: Extensions.doAsync(match),
-	doAlways: Extensions.doAlways(match),
-	doAlwaysAsync: Extensions.doAlwaysAsync(match),
-	doIfSuccessful: Extensions.doIfSuccessful(match),
-	doIfSuccessfulAsync: Extensions.doIfSuccessfulAsync(match),
-	doIfFailure: Extensions.doIfFailure(match),
-	doIfFailureAsync: Extensions.doIfFailureAsync(match),
-	apply: Extensions.apply(match),
-	applyAsync: Extensions.applyAsync(match),
-	applyAlways: Extensions.applyAlways(match),
-	applyAlwaysAsync: Extensions.applyAlwaysAsync(match),
-	applyIfFailure: Extensions.applyIfFailure(match),
-	applyIfFailureAsync: Extensions.applyIfFailureAsync(match),
-	applyIfSuccessful: Extensions.applyIfSuccessful(match),
-	applyIfSuccessfulAsync: Extensions.applyIfSuccessfulAsync(match)
-});
+/**
+ * Represents an object that either has a successful value or a failure value resulting from some operation.
+ * @typeparam `TSuccess` - Type of object the Result contains if the operation was successful.
+ * @typeparam `TFailure` - Type of object the Result contains if the operation was a failure.
+ */
+export class Result<TSuccess, TFailure> {
+	constructor(private readonly _isSuccess: boolean, private readonly _success: TSuccess | undefined, private readonly _failure: TFailure | undefined) {}
+
+	/**
+	 * Returns a string representing the content of the Result.
+	 * @returns `Success: ${success}` if the Result contains a successful value or `Failure ${failure}` if the Result contains a failure value.
+	 */
+	toString() : string { return this._isSuccess ? `Success: ${this._success}` : `Failure: ${this._failure}`; }
+
+	/**
+	 * If the Result has a successful value, this extension will return `true`. If the Result has a failure value then it will return `false`.
+	 * @returns A boolean representing whether the Result has a successful value or not.
+	 */
+	isSuccess() : boolean { return this._isSuccess; }
+
+	/**
+	 * Returns the Result as a ResultPromise.
+	 * @returns The Result as a `ResultPromise<TSuccess, TFailure>`.
+	 */
+	toPromise() : ResultPromise<TSuccess, TFailure> { return new ResultPromise(Promise.resolve(this)); }
+
+	/**
+	 * If the Result has a success value, returns an Option with the success value. If the Result has a failure value then returns an empty Option.
+	 * @returns An `Option<TSuccess>` with the success value or no value.
+	 */
+	success() : Option<TSuccess> { return this._isSuccess ? Option.some(this._success as TSuccess) : Option.none<TSuccess>() }
+
+	/**
+	 * If the Result has a success value, returns an Option with no value. If the Result has a failure value then returns an Option with the failure value.
+	 * @returns An `Option<TFailure>` with the failure value or no value.
+	 */
+	failure() : Option<TFailure> { return this._isSuccess ? Option.none<TFailure>() : Option.some<TFailure>(this._failure as TFailure) }
+
+	/**
+	 * If the Result has a success value, then the function in the first parameter is invoked with the success value and its result is returned. If the Result has a failure value, then the function in the second parameter is invoked with the value failure and its result is returned.
+	 * @param success A function that is executed if the Result has a success value.
+	 * @param failure A function that is executed if the Result has a failure value.
+	 * @returns The result of the appropriate function.
+	 */
+	match<T>(success: (some: TSuccess) => T, failure: (failure: TFailure) => T) : T {
+		return this._isSuccess
+			? success(this._success as TSuccess)
+			: failure(this._failure as TFailure); }
+
+	/**
+	 * If the Result has a success value, then the function in the first parameter is invoked with the success value and its result is returned. If the Result has a failure value, then the function in the second parameter is invoked with the value failure and its result is returned.
+	 * @param success A function that is executed if the Result has a success value.
+	 * @param failure A function that is executed if the Result has a failure value.
+	 * @returns The result of the appropriate function.
+	 */
+	matchAsync<T>(success: (some: TSuccess) => Promise<T>, failure: (failure: TFailure) => Promise<T>) : Promise<T> {
+		return this._isSuccess
+			? success(this._success as TSuccess)
+			: failure(this._failure as TFailure) }
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TResult, TFailure>` with the result generated by the function passed in as the first argument. If the Result has a failure value, returns a `Result<TResult, TFailure>` with the failure value.
+	 * @typeparam `TResult` The value type of the returned Option.
+	 * @param map A function that maps the success value to a new value if the Result has a success value.
+	 * @returns A Result that contains the mapped value or the original failure value.
+	 */
+	map<TResult>(map: (success: TSuccess) => TResult) : Result<TResult, TFailure> {
+		return this._isSuccess
+			? Result.success<TResult, TFailure>(map(this._success as TSuccess))
+			: Result.failure<TResult, TFailure>(this._failure as TFailure); }
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TResult, TFailure>` with the result generated by the function passed in as the first argument. If the Result has a failure value, returns a `Result<TResult, TFailure>` with the failure value.
+	 * @typeparam `TResult` The new success type of the returned Result.
+	 * @param map A function that maps the success value to a new value if the Result has a success value.
+	 * @returns A Result that contains the mapped value or the original failure value.
+	 */
+	mapAsync<TResult>(map: (success: TSuccess) => Promise<TResult>) : ResultPromise<TResult, TFailure> {
+		return this._isSuccess
+			? new ResultPromise(map(this._success as TSuccess).then(success => Result.success<TResult, TFailure>(success)))
+			: new ResultPromise(Promise.resolve(Result.failure<TResult, TFailure>(this._failure as TFailure))); }
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TSuccess, TMapFailure>` with the success value. If the Result has a failure value, returns a `Result<TSuccess, TMapFailure>` with the result generated by the function passed in as the first argument.
+	 * @typeparam `TMapFailure` The new failure type of the returned Result.
+	 * @param map A function that maps the failure value to a new value if the Result has a failure value.
+	 * @returns A Result that contains the mapped failure value or the original success value.
+	 */
+	mapFailure<TMapFailure>(mapFailure: (failure: TFailure) => TMapFailure) : Result<TSuccess, TMapFailure> {
+		return this._isSuccess
+			? Result.success<TSuccess, TMapFailure>(this._success as TSuccess)
+			: Result.failure<TSuccess, TMapFailure>(mapFailure(this._failure as TFailure)); }
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TSuccess, TMapFailure>` with the success value. If the Result has a failure value, returns a `Result<TSuccess, TMapFailure>` with the result generated by the function passed in as the first argument.
+	 * @typeparam `TMapFailure` The new failure type of the returned Result.
+	 * @param map A function that maps the failure value to a new value if the Result has a failure value.
+	 * @returns A Result that contains the mapped failure value or the original success value.
+	 */
+	mapFailureAsync<TMapFailure>(mapFailure: (failure: TFailure) => Promise<TMapFailure>) : ResultPromise<TSuccess, TMapFailure> {
+		return this._success
+			? new ResultPromise(Promise.resolve(Result.success<TSuccess, TMapFailure>(this._success as TSuccess)))
+			: new ResultPromise(mapFailure(this._failure as TFailure).then(failure => Result.failure<TSuccess, TMapFailure>(failure))); }
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TResult, TFailure>` with the result generated by the function passed in as the first argument. If the function throws an error the error will be mapped to a failure value by the funciton passed in as the second argument. If the Result contains a failure value returns a new result with the failure value.
+	 * @param map A function that maps the success value to a new value if the Result has a success value. This function has the potential to throw an Error.
+	 * @param mapFailure A function that maps any Errors thrown by the map function to the Result's failure type.
+	 * @returns A result that contains the mapped success value or a failure value.
+	 */
+	tryMap<TResult>(map: (success: TSuccess) => TResult) : Result<TResult, Error | TFailure>
+	tryMap<TResult>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TFailure) | null) : Result<TResult, TFailure>
+	tryMap<TResult>(map: (success: TSuccess) => TResult, mapFailure: ((error: Error) => TFailure) | null = null) {
+		if(mapFailure === null)
+		{
+			return this._isSuccess
+				? Result.try<TResult>(() => map(this._success as TSuccess))
+				: Result.failure<TResult, TFailure>(this._failure as TFailure);
+		}
+		else
+		{
+			return this._isSuccess
+				? Result.try<TResult>(() => map(this._success as TSuccess)).mapFailure(error => mapFailure(error))
+				: Result.failure<TResult, TFailure>(this._failure as TFailure);
+		}
+	}
+
+	/**
+	 * If the Result has a success value, returns a new `Result<TResult, TFailure>` with the result generated by the function passed in as the first argument. If the function throws an error the error will be mapped to a failure value by the funciton passed in as the second argument. If the Result contains a failure value returns a new result with the failure value.
+	 * @param map A function that maps the success value to a new value if the Result has a success value. This function has the potential to throw an Error.
+	 * @param mapFailure A function that maps any Errors thrown by the map function to the Result's failure type.
+	 * @returns A result that contains the mapped success value or a failure value.
+	 */
+	tryMapAsync<TResult>(map: (success: TSuccess) => Promise<TResult>) : ResultPromise<TResult, Error | TFailure>
+	tryMapAsync<TResult>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TFailure>) | null) : ResultPromise<TResult, TFailure>
+	tryMapAsync<TResult>(map: (success: TSuccess) => Promise<TResult>, mapFailure: ((error: Error) => Promise<TFailure>) | null = null) {
+		if(mapFailure === null)
+		{
+			return this._isSuccess
+				? Result.tryAsync<TResult>(() => map(this._success as TSuccess))
+				: Result.failureAsync<TResult, Error | TFailure>(() => Promise.resolve(this._failure as TFailure));
+		}
+		else
+		{
+			return this._isSuccess
+				? Result.tryAsync<TResult>(() => map(this._success as TSuccess)).mapFailureAsync(mapFailure)
+				: Result.failureAsync<TResult, TFailure>(() => Promise.resolve(this._failure as TFailure));
+		}
+	}
+
+	/**
+	 * If the Result has a success value, returns the `Result<TResult, TFailure>` generated by the bind function passed in the first parameter. If the Result has a failure value, returns a `Result<TResult, TFailure>` with the failure value.
+	 * @typeparam `TResult` The new success type of the returned Result.
+	 * @param bind A function that maps the current success value to a new `Result<TResult, TFailure>` if the Result has a success value.
+	 * @returns A `Result<TResult, TFailure>` that has been generated by the bind function or has the original failure value.
+	 */
+	bind<TResult>(bind: (success: TSuccess) => Result<TResult, TFailure>) : Result<TResult, TFailure> {
+		return this._isSuccess
+			? bind(this._success as TSuccess)
+			: Result.failure<TResult, TFailure>(this._failure as TFailure)}
+
+	/**
+	 * If the Result has a success value, returns the `Result<TResult, TFailure>` generated by the bind function passed in the first parameter. If the Result has a failure value, returns a `Result<TResult, TFailure>` with the failure value.
+	 * @typeparam `TResult` The new success type of the returned Result.
+	 * @param bind A function that maps the current success value to a new `Result<TResult, TFailure>` if the Result has a success value.
+	 * @returns A `Result<TResult, TFailure>` that has been generated by the bind function or has the original failure value.
+	 */
+	bindAsync<TResult>(bind: (success: TSuccess) => Promise<Result<TResult, TFailure>>) : ResultPromise<TResult, TFailure> {
+		return this._isSuccess
+			? new ResultPromise(bind(this._success as TSuccess))
+			: Result.failureAsync<TResult, TFailure>(() => Promise.resolve(this._failure as TFailure)); }
+
+	/**
+	 * If the Result has a success value, returns a `Result<TSuccess, TResult>` If the Result has a failure value, returns a `Result<TSuccess, TResult>` generated by the bind function passed in the first parameter. 
+	 * @typeparam `TResult` The new failure type of the returned Result.
+	 * @param bind A function that maps the current failure value to a new `Result<TSuccess, TResult>` if the Result has a failure value.
+	 * @returns A `Result<TSuccess, TResult>` that has been generated by the bind function or has the original success value.
+	 */
+	bindOnFailure<TResult>(bindFailure: (failure: TFailure) => Result<TSuccess, TResult>) : Result<TSuccess, TResult> {
+		return this._isSuccess
+			? Result.success<TSuccess, TResult>(this._success as TSuccess)
+			: bindFailure(this._failure as TFailure); }
+
+	/**
+	 * If the Result has a success value, returns a `Result<TSuccess, TResult>` If the Result has a failure value, returns a `Result<TSuccess, TResult>` generated by the bind function passed in the first parameter. 
+	 * @typeparam `TResult` The new failure type of the returned Result.
+	 * @param bind A function that maps the current failure value to a new `Result<TSuccess, TResult>` if the Result has a failure value.
+	 * @returns A `Result<TSuccess, TResult>` that has been generated by the bind function or has the original success value.
+	 */
+	bindOnFailureAsync<TResult>(bindFailure: (failure: TFailure) => Promise<Result<TSuccess, TResult>>) : ResultPromise<TSuccess, TResult> {
+		return this._isSuccess
+			? Result.successAsync<TSuccess, TResult>(() => Promise.resolve(this._success as TSuccess))
+			: new ResultPromise(bindFailure(this._failure as TFailure)); }
+
+	/**
+	 * If the Result has a success value and the predicate function is true, returns a Result with the original success value. If the Result has a success value and the predicate function is false, returns a result with the failure generated by the function passed into the second parameter. Otherwise, returns a Result with the original failure value.
+	 * @param predicate A function that maps the Result's  success value to a boolean representing whether the returned value is a success or failure value.
+	 * @param failureFactory A function that converts the success value into a failure value if the predicate resolves to false.
+	 * @returns A result with the success value or failure value depending on the result of the predicate.
+	 */
+	where(predicate: (success: TSuccess) => boolean, failureFactory: (success: TSuccess) => TFailure) : Result<TSuccess, TFailure> {
+		return this._isSuccess
+			? predicate(this._success as TSuccess)
+				? this
+				: Result.failure<TSuccess, TFailure>(failureFactory(this._success as TSuccess))
+			: Result.failure<TSuccess, TFailure>(this._failure as TFailure); }
+
+	/**
+	 * If the Result has a success value and the predicate function is true, returns a Result with the original success value. If the Result has a success value and the predicate function is false, returns a result with the failure generated by the function passed into the second parameter. Otherwise, returns a Result with the original failure value.
+	 * @param predicate A function that maps the Result's  success value to a boolean representing whether the returned value is a success or failure value.
+	 * @param failureFactory A function that converts the success value into a failure value if the predicate resolves to false.
+	 * @returns A result with the success value or failure value depending on the result of the predicate.
+	 */
+	whereAsync(predicate: (success: TSuccess) => Promise<boolean>, failureFactory: (success: TSuccess) => Promise<TFailure>) : ResultPromise<TSuccess, TFailure> {
+		return new ResultPromise(Promise.resolve(this._isSuccess
+			? predicate(this._success as TSuccess).then(isSuccess => isSuccess
+				? this
+				: failureFactory(this._success as TSuccess).then(failure => Result.failure<TSuccess, TFailure>(failure)))
+			: Result.failure<TSuccess, TFailure>(this._failure as TFailure))); }
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. If the Result has a failure value, performs the function provided as the second parameter. The original Result is always returned.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 * @returns The original Result.
+	 */
+	do(doIfSuccess: (success: TSuccess) => void, doIfFailure: (failure: TFailure) => void) : Result<TSuccess, TFailure> {
+		if(this._isSuccess)
+			doIfSuccess(this._success as TSuccess);
+		else
+			doIfFailure(this._failure as TFailure);
+		return this;
+	}
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. If the Result has a failure value, performs the function provided as the second parameter. The original Result is always returned.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 * @returns The original Result.
+	 */
+	doAsync(doIfSuccess: (success: TSuccess) => Promise<void>, doIfFailure: (failure: TFailure) => Promise<void>) : ResultPromise<TSuccess, TFailure> {
+		if(this._isSuccess)
+			return new ResultPromise(doIfSuccess(this._success as TSuccess).then(_ => this));
+		else
+			return new ResultPromise(doIfFailure(this._failure as TFailure).then(_ => this));
+	}
+
+	/**
+	 * Performs the function provided as the first parameter and returns the original Result.
+	 * @param doAction The function to be executed.
+	 * @returns The original Result.
+	 */
+	doAlways(doAction: () => void) : Result<TSuccess, TFailure> {
+		doAction();
+		return this;
+	}
+
+	/**
+	 * Performs the function provided as the first parameter and returns the original Result.
+	 * @param doAction The function to be executed.
+	 * @returns The original Result.
+	 */
+	doAlwaysAsync(doAction: () => Promise<void>) : ResultPromise<TSuccess, TFailure> { return new ResultPromise(doAction().then(_ => this)); }
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. The original Result is always returned.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @returns The original Result.
+	 */
+	doIfSuccessful(doIfSuccess: (success: TSuccess) => void) : Result<TSuccess, TFailure> {
+		if(this._isSuccess)
+			doIfSuccess(this._success as TSuccess);
+		return this;
+	}
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. The original Result is always returned.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @returns The original Result.
+	 */
+	doIfSuccessfulAsync(doIfSuccess: (success: TSuccess) => Promise<void>) : ResultPromise<TSuccess, TFailure> {
+		if(this._isSuccess)
+			return new ResultPromise(doIfSuccess(this._success as TSuccess).then(_ => this));
+		return new ResultPromise(Promise.resolve(this));
+	}
+
+	/**
+	 * If the Result has a failure value, performs the function provided as the first parameter. The original Result is always returned.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 * @returns The original Result.
+	 */
+	doIfFailure(doIfFailure: (failure: TFailure) => void) : Result<TSuccess, TFailure> {
+		if(!this._isSuccess)
+			doIfFailure(this._failure as TFailure);
+		return this;
+	}
+
+	/**
+	 * If the Result has a failure value, performs the function provided as the first parameter. The original Result is always returned.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 * @returns The original Result.
+	 */
+	doIfFailureAsync(doIfFailure: (failure: TFailure) => Promise<void>) : ResultPromise<TSuccess, TFailure> {
+		if(!this._isSuccess)
+			return new ResultPromise(doIfFailure(this._failure as TFailure).then(_ => this));
+		return new ResultPromise(Promise.resolve(this));
+	}
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. If the Result has a failure value, performs the function provided as the second parameter.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 */
+	apply(doIfSuccess: (success: TSuccess) => void, doIfFailure: (failure: TFailure) => void) : void {
+		if(this._isSuccess)
+			doIfSuccess(this._success as TSuccess);
+		else
+			doIfFailure(this._failure as TFailure);
+	}
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter. If the Result has a failure value, performs the function provided as the second parameter.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 */
+	applyAsync(doIfSuccess: (success: TSuccess) => Promise<void>, doIfFailure: (failure: TFailure) => Promise<void>) : Promise<void> {
+		if(this._isSuccess)
+			return doIfSuccess(this._success as TSuccess);
+		else
+			return doIfFailure(this._failure as TFailure);
+	}
+
+	/**
+	 * Performs the function provided as the first parameter.
+	 * @param doAction The function to be executed.
+	 */
+	applyAlways(doAction: () => void) : void {
+		doAction();
+	}
+
+	/**
+	 * Performs the function provided as the first parameter.
+	 * @param doAction The function to be executed.
+	 */
+	applyAlwaysAsync(doAction: () => Promise<void>) : Promise<void> { return doAction(); }
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 */
+	applyIfSuccessful(doIfSuccess: (success: TSuccess) => void) : void {
+		if(this._isSuccess)
+			doIfSuccess(this._success as TSuccess);
+	}
+
+	/**
+	 * If the Result has a success value, performs the function provided as the first parameter.
+	 * @param doIfSuccess The function to be executed if the Result has a success value.
+	 */
+	applyIfSuccessfulAsync(doIfSuccess: (success: TSuccess) => Promise<void>) : Promise<void> {
+		if(this._isSuccess)
+			return doIfSuccess(this._success as TSuccess);
+		return Promise.resolve();
+	}
+
+	/**
+	 * If the Result has a failure value, performs the function provided as the first parameter.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 */
+	applyIfFailure(doIfFailure: (failure: TFailure) => void) : void {
+		if(!this._isSuccess)
+			doIfFailure(this._failure as TFailure);
+	}
+
+	/**
+	 * If the Result has a failure value, performs the function provided as the first parameter.
+	 * @param doIfFailure The function to be executed if the Result has a failure value.
+	 */
+	applyIfFailureAsync(doIfFailure: (failure: TFailure) => Promise<void>) : Promise<void> {
+		if(!this._isSuccess)
+			return doIfFailure(this._failure as TFailure);
+		return Promise.resolve();
+	}
+
+	/**
+	 * Returns a Result with a successful value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param success The value of the result.
+	 * @returns A Result with a successful value.
+	 */
+	static success<TSuccess, TFailure = Error>(success: TSuccess) : Result<TSuccess, TFailure> { return new Result<TSuccess, TFailure>(true, success, undefined); }
+
+	/**
+	 * Returns a Result with a successful value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param success The successful value of the result.
+	 * @returns A Result with a successful value.
+	 */
+	static successAsync<TSuccess, TFailure = Error>(success: () => Promise<TSuccess>) : ResultPromise<TSuccess, TFailure> { return new ResultPromise(success().then(value => Result.success<TSuccess, TFailure>(value))); }
+
+	/**
+	 * Returns a Result with a failure value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param failure The failure value of the result.
+	 * @returns A Result with a failure value.
+	 */
+	static failure<TSuccess, TFailure = Error>(failure: TFailure) : Result<TSuccess, TFailure> { return new Result<TSuccess, TFailure>(false, undefined, failure); }
+
+	/**
+	 * Returns a Result with a failure value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param failure The failure value of the result.
+	 * @returns A Result with a failure value.
+	 */
+	static failureAsync<TSuccess, TFailure = Error>(failure: () => Promise<TFailure>) : ResultPromise<TSuccess, TFailure> { return new ResultPromise(failure().then(value => Result.failure<TSuccess, TFailure>(value))); }
+
+	/**
+	 * If the function passed in as the first argument resolves to true, returns a Result with a succesful value. Otherwise, returns a result with a failure value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param isSuccess A function that returns a boolean that determines if the Result is produced with a success value or failure value.
+	 * @param success A function that produces the success value of the result.
+	 * @param failure A function that produces the failure value of the result.
+	 * @returns A Result with either a success value or a failure value.
+	 */
+	static create<TSuccess, TFailure = Error>(isSuccess: () => boolean, success: () => TSuccess, failure: () => TFailure) : Result<TSuccess, TFailure> { return isSuccess() ? new Result<TSuccess, TFailure>(true, success(), undefined) : new Result<TSuccess, TFailure>(false, undefined, failure()); }
+
+	/**
+	 * If the function passed in as the first argument resolves to true, returns a Result with a succesful value. Otherwise, returns a result with a failure value.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param isSuccess A function that returns a boolean that determines if the Result is produced with a success value or failure value.
+	 * @param success A function that produces the success value of the result.
+	 * @param failure A function that produces the failure value of the result.
+	 * @returns A Result with either a success value or a failure value.
+	 */
+	static createAsync<TSuccess, TFailure = Error>(isSuccess: () => Promise<boolean>, success: () => Promise<TSuccess>, failure: () => Promise<TFailure>) : ResultPromise<TSuccess, TFailure> {
+		return new ResultPromise(isSuccess().then(isSuccess => isSuccess
+			? success().then(success => new Result<TSuccess, TFailure>(true, success, undefined))
+			: failure().then(failure => new Result<TSuccess, TFailure>(false, undefined, failure))));
+	}
+
+	/**
+	 * Executes the function provided as the first parameter. If the function returns a value then the value is returned as a succesful Result. If the function throws an error, then the error is returned as a failure Result.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @param successFactory A function that produces the success value of the result.
+	 * @returns A Result with either a success value or an Error failure value.
+	 */
+	static try<TSuccess>(successFactory: () => TSuccess) : Result<TSuccess, Error> {
+		try {
+			return new Result<TSuccess, Error>(true, successFactory(), undefined);
+		}
+		catch(error) {
+			return anyToErrorResult<TSuccess>(error);
+		}
+	}
+
+	/**
+	 * Executes the function provided as the first parameter. If the function returns a value then the value is returned as a succesful Result. If the function throws an error, then the error is returned as a failure Result.
+	 * @typeparam TSuccess The type of the Result's success value.
+	 * @param successFactory A function that produces the success value of the result.
+	 * @returns A Result with either a success value or an Error failure value.
+	 */
+	static tryAsync<TSuccess>(successFactory: () => Promise<TSuccess>) : ResultPromise<TSuccess, Error> {
+		return new ResultPromise(successFactory().then(success => new Result<TSuccess, Error>(true, success, undefined), error => anyToErrorResult<TSuccess>(error)));
+	}
+
+	/**
+	 * Executes the function provided as the first parameter. If the function executes without errors then a succesful Result is returned. If the function throws an error, then the error is returned as a failure Result.
+	 * @param action A function that produces the success value of the result.
+	 * @returns A Result with either a Unit success value or an Error failure value.
+	 */
+	static tryAction(action: () => void) : Result<Unit, Error> {
+		try {
+			action();
+			return new Result<Unit, Error>(true, Unit, undefined);
+		}
+		catch(error) {
+			return anyToErrorResult<Unit>(error);
+		}
+	}
+
+	/**
+	 * Executes the function provided as the first parameter. If the function executes without errors then a succesful Result is returned. If the function throws an error, then the error is returned as a failure Result.
+	 * @param action A function that produces the success value of the result.
+	 * @returns A Result with either a Unit success value or an Error failure value.
+	 */
+	static tryActionAsync(action: () => Promise<void>) : ResultPromise<Unit, Error> {
+		return new ResultPromise(action().then(success => new Result<Unit, Error>(true, Unit, undefined), error => anyToErrorResult<Unit>(error)));
+	}
+
+	/**
+	 * Returns a Result with a succesful Unit as its value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @returns A Result with a succesful Unit value.
+	 */
+	static unit<TFailure = Error>() : Result<Unit, TFailure> { return new Result<Unit, TFailure>(true, Unit, undefined); }
+
+	/**
+	 * Returns a Result with a succesful Unit as its value.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @returns A Result with a succesful Unit value.
+	 */
+	static unitAsync<TFailure = Error>() : ResultPromise<Unit, TFailure> { return new ResultPromise(Promise.resolve(new Result<Unit, TFailure>(true, Unit, undefined))); }
+
+	/**
+	 * If the function passed in as the first argument resolves to true, returns a successful Unit Result. If it resolves to false, returns a failure Result with the value produced by the function in the second parameter.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param isSuccess A function that returns a boolean that determines if the Result is produced with a success value or failure value.
+	 * @param failureFactory A function that produces a failure result in the case a failure is returned.
+	 * @returns A Result with a successful Unit value or a failure value produced by the failure factory.
+	 */
+	static where<TFailure = Error>(isSuccess: () => boolean, failureFactory: () => TFailure) : Result<Unit, TFailure> { return isSuccess() ? new Result<Unit, TFailure>(true, Unit, undefined) : new Result<Unit, TFailure>(false, undefined, failureFactory()); }
+
+	
+	/**
+	 * If the function passed in as the first argument resolves to true, returns a successful Unit Result. If it resolves to false, returns a failure Result with the value produced by the function in the second parameter.
+	 * @typeparam TFailure The type of the Result's failure value.
+	 * @param isSuccess A function that returns a boolean that determines if the Result is produced with a success value or failure value.
+	 * @param failureFactory A function that produces a failure result in the case a failure is returned.
+	 * @returns A Result with a successful Unit value or a failure value produced by the failure factory.
+	 */
+	static whereAsync<TFailure = Error>(isSuccess: () => Promise<boolean>, failureFactory: () => Promise<TFailure>) : ResultPromise<Unit, TFailure> {
+		return new ResultPromise(isSuccess().then(success => success 
+			? new Result<Unit, TFailure>(true, Unit, undefined)
+			: failureFactory().then(failure => new Result<Unit, TFailure>(false, undefined, failure)))); }
+}
+
+const anyToErrorResult = <TSuccess>(error: any) => {
+	if(error instanceof Error)
+		return Result.failure<TSuccess, Error>(error);
+	else if(typeof error === 'string' || typeof error === 'number' || typeof error === 'boolean' || error instanceof String || error instanceof Object)
+		return Result.failure<TSuccess, Error>(new Error(error.toString()));
+	return Result.failure<TSuccess, Error>(new Error("An unparsable error was thrown from ResultFactory"));
+}

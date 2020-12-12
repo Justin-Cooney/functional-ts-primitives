@@ -5,6 +5,7 @@
   "main": "dist/lib/index.js",
   "types": "dist/types/index.d.ts",
   "author": "Justin Cooney",
+  "contributors": [ "Mich4xd" ],
   "license": "MIT",
   "repository": {
     "type": "git",
