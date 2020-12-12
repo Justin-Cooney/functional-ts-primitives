@@ -22,12 +22,12 @@ describe('Result', () => {
 
 	describe('Base', () => {
 		test('toString returns success string when success', async () => {
-			const result = await Result.successAsync<number, Error>(async () => 50);
-			expect(result.toString()).toBe("Success: 50");
+			const result = await Result.successAsync<number, Error>(async () => 50).toStringAsync();
+			expect(result).toBe("Success: 50");
 		});
 		test('toString returns failure string when failure', async () => {
-			const result = await Result.failureAsync<number, Error>(async () => new Error("TestError"));
-			expect(result.toString()).toBe("Failure: Error: TestError");
+			const result = await Result.failureAsync<number, Error>(async () => new Error("TestError")).toStringAsync();
+			expect(result).toBe("Failure: Error: TestError");
 		});
 		test('isSuccess returns result when success', async () => {
 			const result = await Result.successAsync<number, Error>(async () => 50);

@@ -18,10 +18,10 @@ describe('OptionPromise', () => {
 
 	describe('Base', () => {
 		test('toStringAsync returns some string when some', async () => {
-			expect(await Option.some(50).toPromise().toString()).toBe("Some: 50");
+			expect(await Option.some(50).toPromise().toStringAsync()).toBe("Some: 50");
 		});
 		test('toStringAsync returns none string when none', async () => {
-			expect(await Option.none<number>().toPromise().toString()).toBe("None");
+			expect(await Option.none<number>().toPromise().toStringAsync()).toBe("None");
 		});
 		test('hasValue returns true when has value', async () => {
 			expect(await Option.some<number>(50).toPromise().hasValue()).toBeTruthy();

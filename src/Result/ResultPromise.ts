@@ -15,7 +15,7 @@ export class ResultPromise<TSuccess, TFailure> implements Promise<Result<TSucces
 
 	toOptionPromise<TValue>(this: Promise<import("..").Option<TValue>>): OptionPromise<TValue> { throw new Error("Method not implemented."); }
 	toResultPromise<TSuccess, TFailure>(this: Promise<Result<TSuccess, TFailure>>): ResultPromise<TSuccess, TFailure> {
-		return new ResultPromise(this);
+		return this as ResultPromise<TSuccess, TFailure>;
 	}
 
 	[Symbol.toStringTag]: string;
