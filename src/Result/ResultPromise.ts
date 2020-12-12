@@ -13,6 +13,11 @@ export class ResultPromise<TSuccess, TFailure> implements Promise<Result<TSucces
 		return this._promise.catch(onrejected);
 	}
 
+	toOptionPromise<TValue>(this: Promise<import("..").Option<TValue>>): OptionPromise<TValue> { throw new Error("Method not implemented."); }
+	toResultPromise<TSuccess, TFailure>(this: Promise<Result<TSuccess, TFailure>>): ResultPromise<TSuccess, TFailure> {
+		return new ResultPromise(this);
+	}
+
 	[Symbol.toStringTag]: string;
 
 	finally(onfinally?: (() => void) | null | undefined): Promise<Result<TSuccess, TFailure>> {
@@ -23,7 +28,7 @@ export class ResultPromise<TSuccess, TFailure> implements Promise<Result<TSucces
 	 * Returns a string representing the content of the Result.
 	 * @returns `Success: ${success}` if the Result contains a successful value or `Failure ${failure}` if the Result contains a failure value.
 	 */
-	toString() : Promise<string> { return this.then(result => result.toString()); }
+	toStringAsync() : Promise<string> { return this.then(result => result.toString()); }
 
 	/**
 	 * If the Result has a successful value, this extension will return `true`. If the Result has a failure value then it will return `false`.
