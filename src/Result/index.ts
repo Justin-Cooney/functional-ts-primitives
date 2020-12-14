@@ -1,3 +1,3 @@
-export { Result } from "./ResultTypes";
-export { ResultPromise } from "./ResultPromiseTypes";
-export { ResultFactory } from "./ResultFactory";
+export * from "./Result";
+export * from "./ResultPromise";
+import "./PromiseExtensions";

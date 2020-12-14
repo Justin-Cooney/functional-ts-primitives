@@ -8,7 +8,8 @@
 		"lib": ["es2019", "dom"],
 		"declarationDir": "dist/types",
 		"outDir": "dist/lib",
-		"strictNullChecks": true
+		"strictNullChecks": true,
+		"downlevelIteration": true
 	},
 	"include": [
 		"src/**/*"
